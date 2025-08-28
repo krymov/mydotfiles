@@ -98,9 +98,22 @@ for config_file in "$HOME/.zsh/"{env,aliases,functions,plugins,completions}.zsh;
   [[ -r "$config_file" ]] && source "$config_file"
 done
 
-# Simple, effective prompt (set after plugins)
-autoload -U colors && colors
-PS1="%{$fg[cyan]%}%n%{$reset_color%}@%{$fg[yellow]%}%m%{$reset_color%} %{$fg[green]%}%1~%{$reset_color%} %# "
+# Git-aware prompt setup
+autoload -Uz colors vcs_info && colors
+setopt PROMPT_SUBST
+
+# Configure git info
+zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:git:*' formats ' (%{$fg[red]%}%b%{$reset_color%})'
+zstyle ':vcs_info:git:*' actionformats ' (%{$fg[red]%}%b%{$reset_color%}|%{$fg[yellow]%}%a%{$reset_color%})'
+
+# Function to get git info
+precmd() {
+  vcs_info
+}
+
+# Clean, informative prompt
+PS1='%{$fg[cyan]%}%n%{$reset_color%}@%{$fg[yellow]%}%m%{$reset_color%} %{$fg[green]%}%1~%{$reset_color%}${vcs_info_msg_0_} %# '
 
 # Load local machine-specific configuration (not tracked in git)
 [[ -r "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"

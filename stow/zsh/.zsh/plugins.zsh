@@ -1,27 +1,25 @@
-# Lightweight plugin management with znap
+# Minimal plugin configuration for maximum stability
 
-# Bootstrap znap if not present
-if [[ ! -f "$HOME/.znap/znap.zsh" ]]; then
-  echo "Installing znap plugin manager..."
-  git clone --depth 1 -- https://github.com/marlonrichert/zsh-snap.git "$HOME/.znap" 2>/dev/null || {
-    echo "Warning: znap installation failed, using minimal configuration"
-    return 0
-  }
-fi
+# Only use znap if git is available and working
+if command -v git >/dev/null 2>&1; then
+  # Bootstrap znap if not present
+  if [[ ! -f "$HOME/.znap/znap.zsh" ]]; then
+    echo "Installing znap plugin manager..."
+    if git clone --depth 1 --quiet https://github.com/marlonrichert/zsh-snap.git "$HOME/.znap" 2>/dev/null; then
+      echo "znap installed successfully"
+    else
+      echo "Warning: znap installation failed, using minimal configuration"
+    fi
+  fi
 
-# Only load znap if it was successfully installed
-if [[ -f "$HOME/.znap/znap.zsh" ]]; then
-  source "$HOME/.znap/znap.zsh"
+  # Load znap and essential plugins only
+  if [[ -f "$HOME/.znap/znap.zsh" ]]; then
+    source "$HOME/.znap/znap.zsh"
 
-  # Essential plugins only (minimal for stability)
-  znap source zsh-users/zsh-autosuggestions
-  znap source zsh-users/zsh-syntax-highlighting
-
-else
-  echo "Warning: znap not available, using minimal configuration"
-  
-  # Simple fallback prompt
-  PS1='%n@%m %1~ %# '
+    # Essential plugins only
+    znap source zsh-users/zsh-autosuggestions 2>/dev/null || true
+    znap source zsh-users/zsh-syntax-highlighting 2>/dev/null || true
+  fi
 fi
 
 # FZF integration (if available)
@@ -62,30 +60,10 @@ if [[ -n "${ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE:-}" ]]; then
   ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 fi
 
-# Prompt setup
-# Try pure prompt first, fall back to a simple custom prompt
-if ! command -v pure >/dev/null && [[ -f "$HOME/.znap/znap.zsh" ]]; then
-  znap source sindresorhus/pure
-fi
-
-autoload -Uz promptinit && promptinit
-
-if command -v pure >/dev/null; then
-  prompt pure
-else
-  # Fallback: simple but informative prompt
-  setopt PROMPT_SUBST
-  autoload -Uz vcs_info
-  zstyle ':vcs_info:*' enable git
-  zstyle ':vcs_info:*' formats ' (%b)'
-  zstyle ':vcs_info:*' actionformats ' (%b|%a)'
-
-  precmd() {
-    vcs_info
-  }
-
-  # Simple two-line prompt
-  PROMPT='%F{blue}%~%f%F{red}${vcs_info_msg_0_}%f
-%F{green}❯%f '
-  RPROMPT='%F{8}%T%f'
+# History substring search (if plugin is available)
+if zle -la | grep -q "history-substring-search"; then
+  bindkey '^[[A' history-substring-search-up
+  bindkey '^[[B' history-substring-search-down
+  bindkey '^P' history-substring-search-up
+  bindkey '^N' history-substring-search-down
 fi
