@@ -169,38 +169,29 @@ for module in $STOW_MODULES; do
 done
 
 # Install AstroNvim if not present
-if [[ ! -d "$HOME/.config/nvim/lua/astronvim" ]]; then
-    log_info "Installing AstroNvim..."
-
-    # Check if nvim config directory exists but is not AstroNvim
-    if [[ -d "$HOME/.config/nvim" ]]; then
-        log_warning "Existing nvim config found. Backing up to ~/.config/nvim.backup-$(date +%Y%m%d-%H%M%S)"
-        mv "$HOME/.config/nvim" "$HOME/.config/nvim.backup-$(date +%Y%m%d-%H%M%S)"
-    fi
-
-    # Install AstroNvim
-    git clone --depth 1 https://github.com/AstroNvim/AstroNvim ~/.config/nvim
-    log_success "AstroNvim installed"
-
+if [[ ! -d "$HOME/.config/nvim" ]]; then
+    log_info "Installing AstroNvim user template..."
+    
+    # Install AstroNvim user template (v4 method)
+    git clone --depth 1 https://github.com/AstroNvim/user_example ~/.config/nvim
+    log_success "AstroNvim user template installed"
+    
     # Copy our user configuration
-    if [[ -d "stow/nvim/.config/nvim/lua/user" ]]; then
+    if [[ -d "stow/nvim/.config/nvim" ]]; then
         log_info "Installing user configuration..."
-        cp -r stow/nvim/.config/nvim/lua/user ~/.config/nvim/lua/
+        cp -r stow/nvim/.config/nvim/* ~/.config/nvim/
         log_success "User configuration installed"
     fi
 else
-    log_info "AstroNvim already installed"
-
+    log_info "Neovim config already exists"
+    
     # Update user configuration if it exists in our dotfiles
-    if [[ -d "stow/nvim/.config/nvim/lua/user" ]]; then
+    if [[ -d "stow/nvim/.config/nvim" ]]; then
         log_info "Updating user configuration..."
-        mkdir -p ~/.config/nvim/lua/user
-        cp -r stow/nvim/.config/nvim/lua/user/* ~/.config/nvim/lua/user/
+        cp -r stow/nvim/.config/nvim/* ~/.config/nvim/
         log_success "User configuration updated"
     fi
-fi
-
-# Create initial tmux session
+fi# Create initial tmux session
 log_info "Setting up tmux..."
 if command -v tmux >/dev/null 2>&1; then
     # Kill any existing default session

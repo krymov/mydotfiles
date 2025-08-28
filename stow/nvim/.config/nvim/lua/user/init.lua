@@ -1,5 +1,5 @@
--- AstroNvim User Configuration
--- This file configures AstroNvim with sensible defaults for cross-platform development
+-- AstroNvim User Configuration for v4
+-- This is the main user configuration file
 
 return {
   -- Configure AstroNvim updates
@@ -13,11 +13,6 @@ return {
     skip_prompts = false, -- skip prompts about breaking changes
     show_changelog = true, -- show the changelog after performing an update
     auto_quit = false, -- automatically quit the current session after a successful update
-    remotes = { -- easily add new remotes to track
-      --   ["remote_name"] = "https://remote_url.come/repo.git", -- full remote url
-      --   ["remote2"] = "github_user/repo", -- GitHub user/repo shortcut,
-      --   ["remote3"] = "github_user", -- GitHub user assume AstroNvim fork
-    },
   },
 
   -- Set colorscheme to use
@@ -48,9 +43,6 @@ return {
         -- "lua_ls",
       },
       timeout_ms = 1000, -- default format timeout
-      -- filter = function(client) -- fully override the default formatting function
-      --   return true
-      -- end
     },
     -- enable servers that you already have installed without mason
     servers = {
@@ -77,33 +69,4 @@ return {
       },
     },
   },
-
-  -- This function is run last and is a good place to configuring
-  -- augroups/autocommands and custom filetypes also this just pure lua so
-  -- anything that doesn't fit in the normal config locations above can go here
-  polish = function()
-    -- Set up custom filetypes
-    -- vim.filetype.add {
-    --   extension = {
-    --     foo = "fooscript",
-    --   },
-    --   filename = {
-    --     ["Foofile"] = "fooscript",
-    --   },
-    --   pattern = {
-    --     ["~/%.config/foo/.*"] = "fooscript",
-    --   },
-    -- }
-    
-    -- Custom autocmds
-    vim.api.nvim_create_autocmd("BufWritePre", {
-      pattern = "*",
-      callback = function()
-        -- Remove trailing whitespace on save
-        local save_cursor = vim.fn.getpos(".")
-        vim.cmd("%s/\\s\\+$//e")
-        vim.fn.setpos(".", save_cursor)
-      end,
-    })
-  end,
 }
