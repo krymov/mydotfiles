@@ -39,10 +39,10 @@ A robust, cross-platform dotfiles configuration for macOS (with Nix) and NixOS. 
    ```bash
    # Open a new terminal or source the config
    exec zsh
-   
+
    # Start tmux
    tmux
-   
+
    # Open neovim (AstroNvim will auto-install plugins)
    nvim
    ```
@@ -57,7 +57,7 @@ This dotfiles setup includes comprehensive development environments using Nix fl
 # Set up a Go project
 dev-go myapp
 
-# Set up a Python project  
+# Set up a Python project
 dev-python my-web-app
 
 # Set up a Node.js project
@@ -76,7 +76,7 @@ dev-rust my-rust-app
 
 Each environment automatically activates when you enter the project directory and provides:
 - Complete language toolchain
-- Language servers for IDE integration  
+- Language servers for IDE integration
 - Linting and formatting tools
 - Testing frameworks
 - Common development dependencies
@@ -117,13 +117,13 @@ After running the bootstrap script, you may want to configure:
    ```bash
    # Generate SSH key
    ssh-keygen -t ed25519 -C "your@email.com" -f ~/.ssh/id_ed25519
-   
+
    # Add to SSH agent
    ssh-add ~/.ssh/id_ed25519
-   
+
    # Add to GitHub (requires GitHub CLI)
    gh ssh-key add ~/.ssh/id_ed25519.pub --title "YourMachine-$(date +%Y%m%d)"
-   
+
    # Test connection
    ssh -T git@github.com
    ```
