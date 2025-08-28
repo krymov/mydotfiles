@@ -1,3 +1,10 @@
+# Dotfiles management
+alias dotfiles='cd ~/.dotfiles'
+alias dotup='~/.dotfiles/update.sh'
+alias dotup-all='~/.dotfiles/update.sh --all'
+alias dotup-pkg='~/.dotfiles/update.sh --packages'
+alias bootstrap='~/.dotfiles/bootstrap.sh'
+
 # Enhanced aliases for cross-platform compatibility
 
 # Directory navigation

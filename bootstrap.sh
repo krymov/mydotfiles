@@ -31,7 +31,7 @@ cd "$(dirname "$0")"
 # Platform detection
 detect_platform() {
     case "$OSTYPE" in
-        darwin*) 
+        darwin*)
             echo "macos"
             ;;
         linux*)
@@ -70,6 +70,7 @@ nix-env -iA \
   nixpkgs.eza \
   nixpkgs.bat \
   nixpkgs.direnv \
+  nixpkgs.gh \
   nixpkgs.lazygit \
   nixpkgs.neovim \
   nixpkgs.curl \
@@ -169,10 +170,33 @@ done
 # Install AstroNvim if not present
 if [[ ! -d "$HOME/.config/nvim/lua/astronvim" ]]; then
     log_info "Installing AstroNvim..."
+
+    # Check if nvim config directory exists but is not AstroNvim
+    if [[ -d "$HOME/.config/nvim" ]]; then
+        log_warning "Existing nvim config found. Backing up to ~/.config/nvim.backup-$(date +%Y%m%d-%H%M%S)"
+        mv "$HOME/.config/nvim" "$HOME/.config/nvim.backup-$(date +%Y%m%d-%H%M%S)"
+    fi
+
+    # Install AstroNvim
     git clone --depth 1 https://github.com/AstroNvim/AstroNvim ~/.config/nvim
     log_success "AstroNvim installed"
+
+    # Copy our user configuration
+    if [[ -d "stow/nvim/.config/nvim/lua/user" ]]; then
+        log_info "Installing user configuration..."
+        cp -r stow/nvim/.config/nvim/lua/user ~/.config/nvim/lua/
+        log_success "User configuration installed"
+    fi
 else
     log_info "AstroNvim already installed"
+
+    # Update user configuration if it exists in our dotfiles
+    if [[ -d "stow/nvim/.config/nvim/lua/user" ]]; then
+        log_info "Updating user configuration..."
+        mkdir -p ~/.config/nvim/lua/user
+        cp -r stow/nvim/.config/nvim/lua/user/* ~/.config/nvim/lua/user/
+        log_success "User configuration updated"
+    fi
 fi
 
 # Create initial tmux session

@@ -158,22 +158,126 @@ After running the bootstrap script, you may want to configure:
 
 ## Updating
 
-To update your dotfiles:
+You have several options for updating your dotfiles and packages:
+
+### Quick Updates
 
 ```bash
-cd ~/.dotfiles
-git pull
+# Update everything (recommended)
+./update.sh --all
+
+# Update only packages
+./update.sh --packages
+
+# Update only dotfiles from git
+./update.sh --dotfiles
+
+# Update only Neovim/AstroNvim
+./update.sh --nvim
+
+# Interactive mode (prompts you to choose)
+./update.sh
+```
+
+### When to Use Each Update Method
+
+**Use `./update.sh --packages`** when you want to:
+- Update Nix packages to latest versions
+- Update Homebrew packages (macOS)
+- Quick package updates without touching configs
+
+**Use `./update.sh --dotfiles`** when you want to:
+- Pull latest dotfiles changes from git
+- Re-apply stow configurations
+- Update your dotfiles without changing packages
+
+**Use `./update.sh --nvim`** when you want to:
+- Update AstroNvim core
+- Update your custom nvim configuration
+- Force plugin updates
+
+**Use `./update.sh --all`** when you want to:
+- Complete system update
+- After major changes to the dotfiles repo
+- Monthly maintenance
+
+### Full Reinstall
+
+Only use the bootstrap script for:
+- **Initial setup** on a new machine
+- **Complete reinstall** when something is broken
+- **Major configuration changes** that require re-symlinking
+
+```bash
+# Full reinstall (backs up existing configs)
 ./bootstrap.sh
 ```
 
-To update packages:
+### Package-Specific Updates
 
 ```bash
-# Nix packages
+# Nix packages only
 nix-env -u
 
-# AstroNvim
+# Homebrew (macOS) only
+brew update && brew upgrade && brew cleanup
+
+# AstroNvim plugins only
 nvim +AstroUpdate
+
+# NixOS system (NixOS only)
+sudo nixos-rebuild switch --upgrade
+```
+
+## Quick Reference
+
+### Daily Usage
+```bash
+# Update packages
+./update.sh -p
+
+# Update dotfiles from git
+./update.sh -d
+
+# Update everything
+./update.sh -a
+```
+
+### Key Files
+```bash
+# Edit shell config
+$EDITOR ~/.zshrc
+$EDITOR ~/.zsh/aliases.zsh
+
+# Edit tmux config
+$EDITOR ~/.tmux.conf
+
+# Edit git config
+$EDITOR ~/.gitconfig
+
+# Edit nvim config
+$EDITOR ~/.config/nvim/lua/user/init.lua
+```
+
+### Useful Commands
+```bash
+# Reload shell
+exec zsh
+
+# Reload tmux config
+tmux source-file ~/.tmux.conf
+
+# Update nvim plugins
+nvim +AstroUpdate
+
+# Create new tmux session
+tn project-name
+
+# Quick git status
+g st
+
+# Enhanced file listing
+ll
 ```
 
 ## Customization
