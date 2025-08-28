@@ -146,12 +146,13 @@ backup_config() {
 backup_config "$HOME/.zshrc"
 backup_config "$HOME/.tmux.conf"
 backup_config "$HOME/.gitconfig"
+backup_config "$HOME/.ssh/config"
 
 # Stow dotfiles
 log_info "Symlinking dotfiles with Stow..."
 
 # Core modules for all platforms
-STOW_MODULES="zsh tmux git nvim"
+STOW_MODULES="zsh tmux git nvim ssh"
 
 # Add kitty on Linux/NixOS
 if [[ "$PLATFORM" == "nixos" || "$PLATFORM" == "linux" ]] && [[ -d stow/kitty ]]; then
@@ -216,5 +217,12 @@ echo "  2. Run 'tmux' to start a tmux session"
 echo "  3. Run 'nvim' to initialize AstroNvim (it will download plugins automatically)"
 echo "  4. Consider running 'git config --global user.name \"Your Name\"'"
 echo "  5. Consider running 'git config --global user.email \"your@email.com\"'"
+echo
+log_info "SSH Key Setup (if not already done):"
+echo "  If you need to set up SSH keys for GitHub:"
+echo "  1. Generate key: ssh-keygen -t ed25519 -C \"your@email.com\" -f ~/.ssh/id_ed25519"
+echo "  2. Add to agent: ssh-add ~/.ssh/id_ed25519"
+echo "  3. Add to GitHub: gh ssh-key add ~/.ssh/id_ed25519.pub --title \"YourMachine-\$(date +%Y%m%d)\""
+echo "  4. Test: ssh -T git@github.com"
 echo
 log_info "Your old configs have been backed up with .backup extension if they existed."
