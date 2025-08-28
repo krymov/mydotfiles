@@ -74,7 +74,22 @@ After running the bootstrap script, you may want to configure:
    git config --global user.email "your@email.com"
    ```
 
-2. **Create local configurations** (not tracked by git):
+2. **SSH Key for GitHub** (if not already set up):
+   ```bash
+   # Generate SSH key
+   ssh-keygen -t ed25519 -C "your@email.com" -f ~/.ssh/id_ed25519
+   
+   # Add to SSH agent
+   ssh-add ~/.ssh/id_ed25519
+   
+   # Add to GitHub (requires GitHub CLI)
+   gh ssh-key add ~/.ssh/id_ed25519.pub --title "YourMachine-$(date +%Y%m%d)"
+   
+   # Test connection
+   ssh -T git@github.com
+   ```
+
+3. **Create local configurations** (not tracked by git):
    - `~/.zshrc.local` - Local zsh configuration
    - `~/.gitconfig.local` - Local git configuration
    - `~/.zsh/functions.local.zsh` - Local functions
