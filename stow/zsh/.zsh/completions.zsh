@@ -4,7 +4,7 @@
 # Only run compinit manually if znap is not available
 if [[ ! -f "$HOME/.znap/znap.zsh" ]]; then
     autoload -Uz compinit
-    compinit
+    compinit -u
 fi
 
 # Completion styling
@@ -16,7 +16,8 @@ zstyle ':completion:*' accept-exact '*(N)'
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh/cache
 
-# Group completions by category
+# Create cache directory if it doesn't exist
+[[ ! -d ~/.zsh/cache ]] && mkdir -p ~/.zsh/cache
 zstyle ':completion:*:descriptions' format '%F{yellow}-- %d --%f'
 zstyle ':completion:*:corrections' format '%F{green}-- %d (errors: %e) --%f'
 zstyle ':completion:*:messages' format '%F{purple}-- %d --%f'
@@ -26,13 +27,24 @@ zstyle ':completion:*:warnings' format '%F{red}-- no matches found --%f'
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
 zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
 
-# Git completion
-if command -v git >/dev/null; then
-  # Enable git completion if available
-  if [[ -f "$HOME/.nix-profile/share/git/contrib/completion/git-completion.zsh" ]]; then
-    source "$HOME/.nix-profile/share/git/contrib/completion/git-completion.zsh"
-  fi
-fi
+# Enable completion for aliases
+setopt complete_aliases
+
+# Case-insensitive completion
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+
+# Fuzzy matching of completions
+zstyle ':completion:*' completer _complete _match _approximate
+zstyle ':completion:*:match:*' original only
+zstyle ':completion:*:approximate:*' max-errors 1 numeric
+
+# Ignore completion for commands we don't have
+zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec))'
+
+# Speed up completions
+zstyle ':completion:*' accept-exact '*(N)'
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path ~/.zsh/cache
 
 # Docker completion
 if command -v docker >/dev/null; then

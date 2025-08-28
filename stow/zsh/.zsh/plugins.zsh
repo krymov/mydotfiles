@@ -15,7 +15,6 @@ if [[ -f "$HOME/.znap/znap.zsh" ]]; then
 
   # Essential plugins (lazy-loaded for performance)
   znap source zsh-users/zsh-autosuggestions
-  znap source zsh-users/zsh-completions
   znap source zsh-users/zsh-syntax-highlighting
 
   # Additional useful plugins
@@ -24,8 +23,11 @@ if [[ -f "$HOME/.znap/znap.zsh" ]]; then
   # Fast directory jumping
   znap source agkozak/zsh-z
 
-  # Better completion system
-  znap fpath _cmd zsh-users/zsh-completions src
+  # Add completions from zsh-users/zsh-completions
+  znap fpath zsh-users/zsh-completions src
+
+  # Pure prompt (simple and fast)
+  znap prompt sindresorhus/pure
 
 else
   echo "Warning: znap not available, using minimal configuration"
