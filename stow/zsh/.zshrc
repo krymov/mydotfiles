@@ -98,6 +98,10 @@ for config_file in "$HOME/.zsh/"{env,aliases,functions,plugins,completions}.zsh;
   [[ -r "$config_file" ]] && source "$config_file"
 done
 
+# Simple, effective prompt (set after plugins)
+autoload -U colors && colors
+PS1="%{$fg[cyan]%}%n%{$reset_color%}@%{$fg[yellow]%}%m%{$reset_color%} %{$fg[green]%}%1~%{$reset_color%} %# "
+
 # Load local machine-specific configuration (not tracked in git)
 [[ -r "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
 

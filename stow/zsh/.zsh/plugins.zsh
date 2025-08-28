@@ -3,7 +3,7 @@
 # Bootstrap znap if not present
 if [[ ! -f "$HOME/.znap/znap.zsh" ]]; then
   echo "Installing znap plugin manager..."
-  git clone --depth 1 -- https://github.com/marlonrichert/zsh-snap.git "$HOME/.znap" || {
+  git clone --depth 1 -- https://github.com/marlonrichert/zsh-snap.git "$HOME/.znap" 2>/dev/null || {
     echo "Warning: znap installation failed, using minimal configuration"
     return 0
   }
@@ -13,24 +13,15 @@ fi
 if [[ -f "$HOME/.znap/znap.zsh" ]]; then
   source "$HOME/.znap/znap.zsh"
 
-  # Essential plugins (lazy-loaded for performance)
+  # Essential plugins only (minimal for stability)
   znap source zsh-users/zsh-autosuggestions
   znap source zsh-users/zsh-syntax-highlighting
 
-  # Additional useful plugins
-  znap source zsh-users/zsh-history-substring-search
-
-  # Fast directory jumping
-  znap source agkozak/zsh-z
-
-  # Add completions from zsh-users/zsh-completions
-  znap fpath zsh-users/zsh-completions src
-
-  # Pure prompt (simple and fast)
-  znap prompt sindresorhus/pure
-
 else
   echo "Warning: znap not available, using minimal configuration"
+  
+  # Simple fallback prompt
+  PS1='%n@%m %1~ %# '
 fi
 
 # FZF integration (if available)
