@@ -65,7 +65,7 @@ show_help() {
 
 update_packages() {
     log_info "Updating Nix packages..."
-    
+
     # Update Nix packages
     if command -v nix-env >/dev/null; then
         nix-env -u || log_warning "Some packages failed to update"
@@ -74,7 +74,7 @@ update_packages() {
         log_error "Nix not found"
         return 1
     fi
-    
+
     # Platform-specific updates
     case "$PLATFORM" in
         "macos")
@@ -93,48 +93,48 @@ update_packages() {
 
 update_dotfiles() {
     log_info "Updating dotfiles from git..."
-    
+
     # Check if we're in a git repository
     if ! git rev-parse --git-dir > /dev/null 2>&1; then
         log_error "Not in a git repository"
         return 1
     fi
-    
+
     # Stash any local changes
     if ! git diff --quiet; then
         log_warning "Local changes detected, stashing..."
         git stash push -m "Auto-stash before update $(date)"
     fi
-    
+
     # Pull latest changes
     git pull || {
         log_error "Failed to pull from git"
         return 1
     }
-    
+
     log_success "Dotfiles updated from git"
-    
+
     # Re-stow configurations
     log_info "Re-stowing configurations..."
-    
+
     STOW_MODULES="zsh tmux git nvim"
     if [[ "$PLATFORM" == "nixos" || "$PLATFORM" == "linux" ]] && [[ -d stow/kitty ]]; then
         STOW_MODULES="$STOW_MODULES kitty"
     fi
-    
+
     for module in $STOW_MODULES; do
         if [[ -d "stow/$module" ]]; then
             log_info "Re-stowing $module..."
             stow -R -d stow "$module" || log_warning "Failed to restow $module"
         fi
     done
-    
+
     log_success "Configurations re-stowed"
 }
 
 update_nvim() {
     log_info "Updating Neovim/AstroNvim..."
-    
+
     # Update AstroNvim itself
     if [[ -d "$HOME/.config/nvim/.git" ]]; then
         log_info "Updating AstroNvim core..."
@@ -142,7 +142,7 @@ update_nvim() {
         git pull || log_warning "Failed to update AstroNvim core"
         cd - > /dev/null
     fi
-    
+
     # Update user configuration
     if [[ -d "stow/nvim/.config/nvim/lua/user" ]]; then
         log_info "Updating user configuration..."
@@ -150,11 +150,11 @@ update_nvim() {
         cp -r stow/nvim/.config/nvim/lua/user/* ~/.config/nvim/lua/user/
         log_success "User configuration updated"
     fi
-    
+
     # Update plugins (this will happen when nvim is next opened)
     log_info "Neovim plugins will be updated on next nvim startup"
     log_info "Or run: nvim +AstroUpdate"
-    
+
     log_success "Neovim/AstroNvim updated"
 }
 
@@ -188,7 +188,7 @@ case "${1:-}" in
         echo "4) Only Neovim/AstroNvim"
         echo "5) Show help"
         read -p "Choose [1-5]: " choice
-        
+
         case "$choice" in
             1) update_packages && update_dotfiles && update_nvim ;;
             2) update_packages ;;

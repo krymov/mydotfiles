@@ -17,7 +17,7 @@ return function()
       -- ["~/%.config/foo/.*"] = "fooscript",
     },
   }
-  
+
   -- Custom autocmds
   vim.api.nvim_create_autocmd("BufWritePre", {
     pattern = "*",
@@ -28,20 +28,20 @@ return function()
       vim.fn.setpos(".", save_cursor)
     end,
   })
-  
+
   -- Set up custom keymaps
   local map = vim.keymap.set
-  
+
   -- Better window navigation
   map("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
   map("n", "<C-j>", "<C-w>j", { desc = "Move to lower window" })
   map("n", "<C-k>", "<C-w>k", { desc = "Move to upper window" })
   map("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
-  
+
   -- Better indenting
   map("v", "<", "<gv", { desc = "Indent left" })
   map("v", ">", ">gv", { desc = "Indent right" })
-  
+
   -- Move text up and down
   map("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move text down" })
   map("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move text up" })

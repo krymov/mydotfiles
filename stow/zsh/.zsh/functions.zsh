@@ -142,7 +142,7 @@ sysinfo() {
   echo "Terminal: $TERM"
   echo "Editor: $EDITOR"
   uname -a
-  
+
   if command -v nix-env >/dev/null; then
     echo ""
     echo "Nix Profile:"
@@ -160,7 +160,7 @@ case "$PLATFORM" in
   "macos")
     # Quick Look preview
     ql() { qlmanage -p "$*" &>/dev/null; }
-    
+
     # Spotlight search
     spotlight() { mdfind "kMDItemDisplayName == '*$1*'"; }
     ;;

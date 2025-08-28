@@ -39,19 +39,19 @@ show_help() {
 
 install_packages() {
     log_info "Installing packages from packages.nix..."
-    
+
     if [[ ! -f "packages.nix" ]]; then
         log_error "packages.nix not found!"
         return 1
     fi
-    
+
     # Build the package list
     local packages
     packages=$(nix-instantiate --eval --expr 'map (p: p.name) (import ./packages.nix {})' | tr -d '[]"' | tr ';' '\n' | grep -v '^$' | sort)
-    
+
     log_info "Installing packages:"
     echo "$packages" | sed 's/^/  - /'
-    
+
     # Install packages one by one for better error handling
     while IFS= read -r package; do
         if [[ -n "$package" ]]; then
@@ -59,7 +59,7 @@ install_packages() {
             nix-env -iA "nixpkgs.$package" || log_warning "Failed to install $package"
         fi
     done <<< "$packages"
-    
+
     log_success "Package installation complete!"
 }
 

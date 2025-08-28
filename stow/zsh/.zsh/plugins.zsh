@@ -17,21 +17,21 @@ fi
 # Only load znap if it was successfully installed
 if [[ -f "$HOME/.znap/znap.zsh" ]]; then
   source "$HOME/.znap/znap.zsh"
-  
+
   # Essential plugins (lazy-loaded for performance)
   znap source zsh-users/zsh-autosuggestions
   znap source zsh-users/zsh-completions
   znap source zsh-users/zsh-syntax-highlighting
-  
+
   # Additional useful plugins
   znap source zsh-users/zsh-history-substring-search
-  
+
   # Fast directory jumping
   znap source agkozak/zsh-z
-  
+
   # Better completion system
   znap fpath _cmd zsh-users/zsh-completions src
-  
+
 else
   echo "Warning: znap not available, using minimal configuration"
 fi
@@ -45,7 +45,7 @@ if command -v fzf >/dev/null; then
   if [[ -f "$HOME/.nix-profile/share/fzf/completion.zsh" ]]; then
     source "$HOME/.nix-profile/share/fzf/completion.zsh"
   fi
-  
+
   # Custom FZF functions
   # Ctrl+R for command history with fzf
   __fzf_history__() {
@@ -91,11 +91,11 @@ else
   zstyle ':vcs_info:*' enable git
   zstyle ':vcs_info:*' formats ' (%b)'
   zstyle ':vcs_info:*' actionformats ' (%b|%a)'
-  
+
   precmd() {
     vcs_info
   }
-  
+
   # Simple two-line prompt
   PROMPT='%F{blue}%~%f%F{red}${vcs_info_msg_0_}%f
 %F{green}❯%f '

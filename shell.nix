@@ -9,7 +9,7 @@ in
 
 pkgs.mkShell {
   buildInputs = packages;
-  
+
   shellHook = ''
     echo "🚀 Dotfiles development environment loaded!"
     echo "Available packages:"

@@ -62,7 +62,7 @@ if command -v tmux >/dev/null; then
     sessions=($(tmux list-sessions -F '#S' 2>/dev/null))
     _describe 'sessions' sessions
   }
-  
+
   # Add completion for our tmux aliases
   compdef _tmux_sessions ta
   compdef _tmux_sessions tk

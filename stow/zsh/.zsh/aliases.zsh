@@ -5,6 +5,13 @@ alias dotup-all='~/.dotfiles/update.sh --all'
 alias dotup-pkg='~/.dotfiles/update.sh --packages'
 alias bootstrap='~/.dotfiles/bootstrap.sh'
 
+# Development environment setup
+alias dev-env='~/.dotfiles/dev-env.sh'
+alias dev-go='~/.dotfiles/dev-env.sh go'
+alias dev-python='~/.dotfiles/dev-env.sh python'
+alias dev-nodejs='~/.dotfiles/dev-env.sh nodejs'
+alias dev-rust='~/.dotfiles/dev-env.sh rust'
+
 # Enhanced aliases for cross-platform compatibility
 
 # Directory navigation

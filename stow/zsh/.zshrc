@@ -18,7 +18,7 @@ SAVEHIST=50000
 
 # Platform detection and flags
 case "$OSTYPE" in
-  darwin*) 
+  darwin*)
     export IS_MAC=1
     export PLATFORM="macos"
     ;;
@@ -82,7 +82,7 @@ if command -v fzf >/dev/null; then
   fi
   export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
   export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
-  
+
   # fzf options
   export FZF_DEFAULT_OPTS='
     --height 40%

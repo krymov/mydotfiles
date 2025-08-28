@@ -9,29 +9,29 @@ let
     # Shell and terminal
     zsh
     tmux
-    
+
     # File management
     stow
     tree
-    
+
     # Text processing and search
     ripgrep
     fd
     fzf
     bat
     eza
-    
+
     # Development tools
     git
     lazygit
     gh
     direnv
-    
+
     # System utilities
     curl
     wget
     htop
-    
+
     # Editors
     neovim
   ];
@@ -53,32 +53,32 @@ let
     # python3
     # python3Packages.pip
     # python3Packages.virtualenv
-    
+
     # Node.js development
     # nodejs
     # nodePackages.npm
     # nodePackages.yarn
-    
+
     # Rust development
     # rustup
-    
+
     # Go development
     # go
-    
+
     # Docker and containers
     # docker
     # docker-compose
-    
+
     # Kubernetes tools
     # kubectl
     # kubectx
     # stern
-    
+
     # Cloud tools
     # awscli2
     # google-cloud-sdk
     # terraform
-    
+
     # Database tools
     # postgresql
     # redis

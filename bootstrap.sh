@@ -171,11 +171,11 @@ done
 # Install AstroNvim if not present
 if [[ ! -d "$HOME/.config/nvim" ]]; then
     log_info "Installing AstroNvim user template..."
-    
+
     # Install AstroNvim user template (v4 method)
     git clone --depth 1 https://github.com/AstroNvim/user_example ~/.config/nvim
     log_success "AstroNvim user template installed"
-    
+
     # Copy our user configuration
     if [[ -d "stow/nvim/.config/nvim" ]]; then
         log_info "Installing user configuration..."
@@ -184,7 +184,7 @@ if [[ ! -d "$HOME/.config/nvim" ]]; then
     fi
 else
     log_info "Neovim config already exists"
-    
+
     # Update user configuration if it exists in our dotfiles
     if [[ -d "stow/nvim/.config/nvim" ]]; then
         log_info "Updating user configuration..."
