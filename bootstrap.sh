@@ -162,7 +162,7 @@ fi
 for module in $STOW_MODULES; do
     if [[ -d "stow/$module" ]]; then
         log_info "Stowing $module..."
-        stow -d stow "$module" || log_error "Failed to stow $module"
+        stow -d stow --target="$HOME" "$module" || log_error "Failed to stow $module"
     else
         log_warning "Module $module not found, skipping..."
     fi

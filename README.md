@@ -10,6 +10,8 @@ A robust, cross-platform dotfiles configuration for macOS (with Nix) and NixOS. 
 - **Modern tools**: Includes fzf, ripgrep, bat, eza, and other CLI enhancements
 - **tmux everywhere**: Consistent terminal multiplexing across platforms
 - **AstroNvim**: Powerful Neovim configuration with LSP support
+- **Development environments**: Language-specific Nix flakes with direnv integration
+- **Declarative packages**: Nix-based package management for reproducible setups
 
 ## Included Configurations
 
@@ -18,6 +20,7 @@ A robust, cross-platform dotfiles configuration for macOS (with Nix) and NixOS. 
 - **git**: Comprehensive git configuration with useful aliases
 - **nvim**: AstroNvim setup with language servers and formatters
 - **kitty**: Modern terminal emulator (Linux/NixOS)
+- **Development environments**: Go, Python, Node.js, and Rust flakes with direnv
 
 ## Quick Setup
 
@@ -43,6 +46,42 @@ A robust, cross-platform dotfiles configuration for macOS (with Nix) and NixOS. 
    # Open neovim (AstroNvim will auto-install plugins)
    nvim
    ```
+
+## Development Environments
+
+This dotfiles setup includes comprehensive development environments using Nix flakes and direnv:
+
+### Quick Start with Development Environments
+
+```bash
+# Set up a Go project
+dev-go myapp
+
+# Set up a Python project  
+dev-python my-web-app
+
+# Set up a Node.js project
+dev-nodejs my-frontend
+
+# Set up a Rust project
+dev-rust my-rust-app
+```
+
+### Available Environments
+
+- **Go**: Go toolchain, gopls LSP, golangci-lint, delve debugger, database tools
+- **Python**: Python 3.11, poetry, python-lsp-server, black, pytest, common packages
+- **Node.js**: Node.js 20, npm/yarn/pnpm, TypeScript, ESLint, Prettier, Jest
+- **Rust**: Latest stable Rust, rust-analyzer LSP, cargo tools
+
+Each environment automatically activates when you enter the project directory and provides:
+- Complete language toolchain
+- Language servers for IDE integration  
+- Linting and formatting tools
+- Testing frameworks
+- Common development dependencies
+
+For detailed documentation, see `flakes/README.md`.
 
 ## What the Bootstrap Script Does
 
@@ -99,6 +138,16 @@ After running the bootstrap script, you may want to configure:
 ```
 .dotfiles/
 ├── bootstrap.sh              # Main setup script
+├── update.sh                 # Granular update system
+├── dev-env.sh                # Development environment setup
+├── packages.nix              # Declarative package definitions
+├── shell.nix                 # Development shell environment
+├── flakes/                   # Language-specific development environments
+│   ├── README.md             # Development environment documentation
+│   ├── go/                   # Go development environment
+│   ├── python/               # Python development environment
+│   ├── nodejs/               # Node.js development environment
+│   └── rust/                 # Rust development environment
 ├── stow/                     # Stow packages
 │   ├── git/                  # Git configuration
 │   │   ├── .gitconfig
@@ -158,6 +207,7 @@ After running the bootstrap script, you may want to configure:
 - `lg` - lazygit
 - `t` - tmux
 - `o` - open (macOS) / xdg-open (Linux)
+- `dev-go`, `dev-python`, `dev-nodejs`, `dev-rust` - Quick development environment setup
 
 ## Functions
 
