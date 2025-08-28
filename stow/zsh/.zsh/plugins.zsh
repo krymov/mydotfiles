@@ -3,15 +3,10 @@
 # Bootstrap znap if not present
 if [[ ! -f "$HOME/.znap/znap.zsh" ]]; then
   echo "Installing znap plugin manager..."
-  mkdir -p "$HOME/.znap"
-  if command -v curl >/dev/null; then
-    curl -fsSL https://raw.githubusercontent.com/marlonrichert/zsh-snap/main/install.zsh | zsh
-  elif command -v wget >/dev/null; then
-    wget -qO- https://raw.githubusercontent.com/marlonrichert/zsh-snap/main/install.zsh | zsh
-  else
-    echo "Error: curl or wget required to install znap"
-    return 1
-  fi
+  git clone --depth 1 -- https://github.com/marlonrichert/zsh-snap.git "$HOME/.znap" || {
+    echo "Warning: znap installation failed, using minimal configuration"
+    return 0
+  }
 fi
 
 # Only load znap if it was successfully installed

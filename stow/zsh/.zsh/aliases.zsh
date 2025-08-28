@@ -64,10 +64,9 @@ if command -v kubectl >/dev/null; then
   alias k='kubectl'
 fi
 
-# tmux shortcuts
+# tmux aliases
 alias t='tmux'
 alias ta='tmux attach'
-alias tn='tmux new-session'
 alias tl='tmux list-sessions'
 
 # System shortcuts

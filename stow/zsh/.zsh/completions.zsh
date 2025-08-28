@@ -1,8 +1,11 @@
 # Enhanced completions for cross-platform tools
 
-# Initialize completion system
-autoload -Uz compinit
-compinit
+# Note: compinit is handled automatically by znap
+# Only run compinit manually if znap is not available
+if [[ ! -f "$HOME/.znap/znap.zsh" ]]; then
+    autoload -Uz compinit
+    compinit
+fi
 
 # Completion styling
 zstyle ':completion:*' menu select
