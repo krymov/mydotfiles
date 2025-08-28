@@ -1,0 +1,41 @@
+# Ripgrep configuration file
+# Default options for rg
+
+# Use smart case (case insensitive unless pattern contains uppercase)
+--smart-case
+
+# Show line numbers
+--line-number
+
+# Show colors in output
+--colors=line:none
+--colors=line:style:bold
+
+# Follow symbolic links
+--follow
+
+# Don't search in git directories
+--glob=!.git/*
+
+# Don't search in node_modules
+--glob=!node_modules/*
+
+# Don't search in target directories (Rust)
+--glob=!target/*
+
+# Don't search in build directories
+--glob=!build/*
+--glob=!dist/*
+
+# Don't search in cache directories
+--glob=!.cache/*
+
+# Don't search in Python cache
+--glob=!__pycache__/*
+--glob=!*.pyc
+
+# Sort results
+--sort=path
+
+# Show context around matches
+--context=2

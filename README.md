@@ -1,0 +1,231 @@
+# Dotfiles
+
+A robust, cross-platform dotfiles configuration for macOS (with Nix) and NixOS. This setup provides a consistent development environment across platforms using standard tools and vanilla configurations.
+
+## Features
+
+- **Cross-platform compatibility**: Works on macOS with Nix and NixOS
+- **Standard configurations**: Uses vanilla setups without heavy customizations
+- **Symlink management**: Uses GNU Stow for clean dotfile management
+- **Modern tools**: Includes fzf, ripgrep, bat, eza, and other CLI enhancements
+- **tmux everywhere**: Consistent terminal multiplexing across platforms
+- **AstroNvim**: Powerful Neovim configuration with LSP support
+
+## Included Configurations
+
+- **zsh**: Enhanced shell with modular configuration
+- **tmux**: Terminal multiplexer with vim-like bindings
+- **git**: Comprehensive git configuration with useful aliases
+- **nvim**: AstroNvim setup with language servers and formatters
+- **kitty**: Modern terminal emulator (Linux/NixOS)
+
+## Quick Setup
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/yourusername/dotfiles.git ~/.dotfiles
+   cd ~/.dotfiles
+   ```
+
+2. **Run the bootstrap script**:
+   ```bash
+   ./bootstrap.sh
+   ```
+
+3. **Start a new shell and enjoy**:
+   ```bash
+   # Open a new terminal or source the config
+   exec zsh
+   
+   # Start tmux
+   tmux
+   
+   # Open neovim (AstroNvim will auto-install plugins)
+   nvim
+   ```
+
+## What the Bootstrap Script Does
+
+1. **Installs packages via Nix**:
+   - Core tools: git, tmux, zsh, neovim
+   - CLI enhancements: fzf, ripgrep, fd, eza, bat
+   - Development tools: direnv, lazygit
+
+2. **Sets up zsh as default shell**
+
+3. **Creates symlinks** using GNU Stow for:
+   - Shell configuration (zsh)
+   - Terminal multiplexer (tmux)
+   - Git configuration
+   - Neovim configuration
+   - Kitty configuration (Linux only)
+
+4. **Installs AstroNvim** if not present
+
+5. **Backs up existing configurations** with `.backup` extension
+
+## Manual Configuration
+
+After running the bootstrap script, you may want to configure:
+
+1. **Git user information**:
+   ```bash
+   git config --global user.name "Your Name"
+   git config --global user.email "your@email.com"
+   ```
+
+2. **Create local configurations** (not tracked by git):
+   - `~/.zshrc.local` - Local zsh configuration
+   - `~/.gitconfig.local` - Local git configuration
+   - `~/.zsh/functions.local.zsh` - Local functions
+
+## Directory Structure
+
+```
+.dotfiles/
+├── bootstrap.sh              # Main setup script
+├── stow/                     # Stow packages
+│   ├── git/                  # Git configuration
+│   │   ├── .gitconfig
+│   │   └── .gitignore_global
+│   ├── kitty/                # Kitty terminal config (Linux)
+│   │   └── .config/kitty/kitty.conf
+│   ├── nvim/                 # Neovim configuration
+│   │   └── .config/nvim/
+│   ├── tmux/                 # tmux configuration
+│   │   └── .tmux.conf
+│   └── zsh/                  # zsh configuration
+│       ├── .zshrc
+│       ├── .ripgreprc
+│       └── .zsh/
+│           ├── aliases.zsh
+│           ├── env.zsh
+│           ├── functions.zsh
+│           ├── plugins.zsh
+│           └── completions.zsh
+└── README.md                 # This file
+```
+
+## Platform-Specific Features
+
+### macOS
+- Uses pbcopy/pbpaste for clipboard integration
+- Homebrew integration (if available)
+- macOS-specific aliases and functions
+
+### NixOS/Linux
+- xclip for clipboard integration
+- Kitty terminal configuration
+- NixOS-specific commands and aliases
+
+## Key Bindings (Default/Standard)
+
+### tmux (keeping C-b prefix)
+- `C-b |` - Split vertically
+- `C-b -` - Split horizontally
+- `C-b h/j/k/l` - Navigate panes (vim-like)
+- `C-b r` - Reload config
+
+### zsh
+- `Ctrl+R` - History search with fzf
+- `Ctrl+T` - File search with fzf
+- `Alt+C` - Directory search with fzf
+
+### Neovim (AstroNvim)
+- Uses standard AstroNvim keybindings
+- See [AstroNvim documentation](https://docs.astronvim.com/) for details
+
+## Useful Aliases
+
+- `ll`, `la` - Enhanced ls with eza
+- `cat` - bat with syntax highlighting
+- `g` - git shortcut
+- `lg` - lazygit
+- `t` - tmux
+- `o` - open (macOS) / xdg-open (Linux)
+
+## Functions
+
+- `mkcd <dir>` - Create and enter directory
+- `extract <file>` - Extract various archive formats
+- `ff <pattern>` - Find files by name
+- `fif <pattern>` - Find in files
+- `cdgit` - Change to git root
+- `tn [name]` - Create/attach tmux session
+- `weather [location]` - Get weather info
+- `backup <file>` - Create timestamped backup
+- `serve [port]` - Quick HTTP server
+
+## Updating
+
+To update your dotfiles:
+
+```bash
+cd ~/.dotfiles
+git pull
+./bootstrap.sh
+```
+
+To update packages:
+
+```bash
+# Nix packages
+nix-env -u
+
+# AstroNvim
+nvim +AstroUpdate
+```
+
+## Customization
+
+### Adding new configurations
+1. Create a new directory in `stow/`
+2. Add your configuration files
+3. Update `bootstrap.sh` to include the new module
+
+### Local customizations
+Create these files for local, non-tracked configurations:
+- `~/.zshrc.local`
+- `~/.gitconfig.local`
+- `~/.zsh/functions.local.zsh`
+
+## Troubleshooting
+
+### zsh not loading correctly
+```bash
+# Check if zsh is default shell
+echo $SHELL
+
+# Source configuration manually
+source ~/.zshrc
+```
+
+### Stow conflicts
+```bash
+# Remove existing files/symlinks before stowing
+rm ~/.zshrc ~/.tmux.conf ~/.gitconfig
+
+# Re-run bootstrap
+./bootstrap.sh
+```
+
+### AstroNvim issues
+```bash
+# Clean AstroNvim installation
+rm -rf ~/.config/nvim ~/.local/share/nvim ~/.local/state/nvim ~/.cache/nvim
+
+# Re-run bootstrap
+./bootstrap.sh
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test on both macOS and Linux if possible
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
