@@ -238,6 +238,13 @@ alias vimrc='$EDITOR ~/.config/nvim/init.lua'
 alias zshrc='$EDITOR ~/.zshrc'
 alias tmuxrc='$EDITOR ~/.tmux.conf'
 
+# Neovim configuration switcher
+alias nvim-switch='~/.dotfiles/nvim-switch'
+alias nvs='~/.dotfiles/nvim-switch'
+alias nvs-astro='~/.dotfiles/nvim-switch switch astronvim'
+alias nvs-vanilla='~/.dotfiles/nvim-switch switch vanilla'
+alias nvs-lazy='~/.dotfiles/nvim-switch switch lazyvim'
+
 # VS Code aliases
 if [[ -d "/Applications/Visual Studio Code - Insiders.app" ]]; then
   alias code-insiders='"/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin/code"'

@@ -132,3 +132,6 @@ PS1='%F{cyan}%n%f@%F{yellow}%m%f %F{green}%1~%f${vcs_info_msg_0_} %# '
 
 # Performance measurement (uncomment the zmodload line at the top to use)
 # zprof
+
+# Dotfiles PATH
+export PATH="/Users/mark/.dotfiles:$PATH"

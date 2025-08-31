@@ -1,52 +1,506 @@
-# Dotfiles
+# Mark's Dotfiles# Dotfiles
 
-A robust, cross-platform dotfiles configuration for macOS (with Nix) and NixOS. This setup provides a consistent development environment across platforms with enhanced shell completions, cloud CLI tools, and modern development workflows.
 
-## 🚀 Enhanced Shell Experience
 
-### Smart Completions & Auto-suggestions
+A collection of configuration files and utilities for a productive development environment across macOS and Linux systems.A robust, cross-platform dotfiles configuration for macOS (with Nix) and NixOS. This setup provides a consistent development environment across platforms with enhanced shell completions, cloud CLI tools, and modern development workflows.
 
-Your zsh shell now includes intelligent completions and suggestions:
 
-**Auto-completion** (Press `Tab`):
+
+## 🚀 Features## 🚀 Enhanced Shell Experience
+
+
+
+- **Multiple Neovim Configurations**: Easy switching between AstroNvim, LazyVim, and vanilla configs### Smart Completions & Auto-suggestions
+
+- **Enhanced ZSH Setup**: Custom aliases, functions, and shell improvements with cross-platform compatibility
+
+- **GNU Stow Management**: Organized dotfile management with symlinksYour zsh shell now includes intelligent completions and suggestions:
+
+- **Nix Integration**: Flake-based development environments for different languages
+
+- **One-Command Setup**: Automated installation and configuration**Auto-completion** (Press `Tab`):
+
 - **Commands**: All installed commands with parameter suggestions
-- **File paths**: Smart file and directory completion with fuzzy matching
+
+## 📦 Quick Setup- **File paths**: Smart file and directory completion with fuzzy matching
+
 - **Git**: Branch names, tags, remotes, and git command options
-- **Cloud CLIs**: Complete kubectl, gcloud, aws, docker commands
-- **Custom aliases**: All your custom aliases work with tab completion
 
-**Auto-suggestions** (Fuzzy gray text):
-- **History-based**: Suggests commands from your history as you type
+1. **Clone this repository:**- **Cloud CLIs**: Complete kubectl, gcloud, aws, docker commands
+
+   ```bash- **Custom aliases**: All your custom aliases work with tab completion
+
+   git clone https://github.com/krymov/mydotfiles.git ~/.dotfiles
+
+   cd ~/.dotfiles**Auto-suggestions** (Fuzzy gray text):
+
+   ```- **History-based**: Suggests commands from your history as you type
+
 - **Smart completion**: Context-aware suggestions
-- **Accept with**: `→` (right arrow) or `Ctrl+F`
 
-**History Search**:
-- **Fuzzy search**: `Ctrl+R` for interactive fuzzy history search
+2. **Run the setup script:**- **Accept with**: `→` (right arrow) or `Ctrl+F`
+
+   ```bash
+
+   ./setup.sh**History Search**:
+
+   ```- **Fuzzy search**: `Ctrl+R` for interactive fuzzy history search
+
 - **Substring search**: `↑/↓` arrows for smart history navigation
-- **Pattern matching**: Search with partial commands or arguments
 
-### 🌤️ Cloud CLI Tools Integration
+3. **Restart your shell or reload configuration:**- **Pattern matching**: Search with partial commands or arguments
+
+   ```bash
+
+   source ~/.zshrc### 🌤️ Cloud CLI Tools Integration
+
+   ```
 
 #### Kubernetes (kubectl)
-```bash
-# Quick aliases
-k get pods                    # kubectl get pods
-kgp                          # kubectl get pods
-kgs                          # kubectl get services
-kgd                          # kubectl get deployments
-kns production               # Set namespace to production
-kccc                         # Get current context
 
-# Fuzzy-finder functions
-kctx                         # Fuzzy find and switch contexts
-knsf                         # Fuzzy find and switch namespaces
-klogs                        # Fuzzy find pods and view logs
-kexec                        # Fuzzy find pods and exec into them
+That's it! 🎉# Mark's Dotfiles
 
-# Tab completion for all kubectl commands and your aliases
-k get pods <TAB>             # Shows available pods
-k describe pod <TAB>         # Shows pod names for completion
+
+
+## 🛠️ DependenciesA collection of configuration files and utilities for a productive development environment across macOS and Linux systems.
+
+
+
+The setup script will check for these and guide you through installation:## 🚀 Features
+
+
+
+### Essential- **Multiple Neovim Configurations**: Easy switching between AstroNvim, LazyVim, and vanilla configs
+
+- [GNU Stow](https://www.gnu.org/software/stow/) - Symlink management- **Enhanced ZSH Setup**: Custom aliases, functions, and shell improvements with cross-platform compatibility
+
+- [Neovim](https://neovim.io/) - Text editor- **GNU Stow Management**: Organized dotfile management with symlinks
+
+- [Git](https://git-scm.com/) - Version control- **Nix Integration**: Flake-based development environments for different languages
+
+- **One-Command Setup**: Automated installation and configuration
+
+### Optional but Recommended
+
+- [Nix](https://nixos.org/) - Package management and development environments## 📦 Quick Setup
+
+- [fzf](https://github.com/junegunn/fzf) - Fuzzy finder
+
+- [eza](https://github.com/eza-community/eza) - Modern ls replacement1. **Clone this repository:**
+
+- [bat](https://github.com/sharkdp/bat) - Better cat with syntax highlighting   ```bash
+
+   git clone https://github.com/krymov/mydotfiles.git ~/.dotfiles
+
+## 🎯 Neovim Configuration Switcher   cd ~/.dotfiles
+
+   ```
+
+Easily switch between different Neovim configurations:
+
+2. **Run the setup script:**
+
+```bash   ```bash
+
+# List available configurations   ./setup.sh
+
+nvim-switch list   ```
+
+
+
+# Switch configurations3. **Restart your shell or reload configuration:**
+
+nvim-switch switch astronvim    # Full-featured AstroNvim   ```bash
+
+nvim-switch switch vanilla      # Minimal configuration     source ~/.zshrc
+
+nvim-switch switch lazyvim      # LazyVim-based setup   ```
+
+
+
+# Shortcuts (if aliases are loaded)That's it! 🎉
+
+nvs-astro                       # Quick switch to AstroNvim
+
+nvs-vanilla                     # Quick switch to vanilla## 🛠️ Dependencies
+
+nvs-lazy                        # Quick switch to LazyVim
+
+The setup script will check for these and guide you through installation:
+
+# Maintenance
+
+nvim-switch backup              # Backup current plugin state### Essential
+
+nvim-switch clean               # Clean plugin data/cache- [GNU Stow](https://www.gnu.org/software/stow/) - Symlink management
+
+nvim-switch current             # Show current configuration- [Neovim](https://neovim.io/) - Text editor
+
+```- [Git](https://git-scm.com/) - Version control
+
+
+
+## 📁 Directory Structure### Optional but Recommended
+
+- [Nix](https://nixos.org/) - Package management and development environments
+
+```- [fzf](https://github.com/junegunn/fzf) - Fuzzy finder
+
+~/.dotfiles/- [eza](https://github.com/eza-community/eza) - Modern ls replacement
+
+├── setup.sh                   # One-command setup script- [bat](https://github.com/sharkdp/bat) - Better cat with syntax highlighting
+
+├── nvim-switch                 # Neovim configuration switcher
+
+├── README.md                   # This file## 🎯 Neovim Configuration Switcher
+
+│
+
+├── stow/                       # Configurations managed by GNU StowEasily switch between different Neovim configurations:
+
+│   ├── nvim/                   # AstroNvim configuration (default)
+
+│   │   └── .config/nvim/```bash
+
+│   ├── zsh/                    # ZSH configuration# List available configurations
+
+│   │   ├── .zshrcnvim-switch list
+
+│   │   └── .zsh/
+
+│   ├── git/                    # Git configuration# Switch configurations
+
+│   ├── tmux/                   # Tmux configurationnvim-switch switch astronvim    # Full-featured AstroNvim
+
+│   └── ssh/                    # SSH configurationnvim-switch switch vanilla      # Minimal configuration
+
+│nvim-switch switch lazyvim      # LazyVim-based setup
+
+├── configs/                    # Alternative configurations
+
+│   ├── nvim-astronvim/         # AstroNvim configuration# Shortcuts (if aliases are loaded)
+
+│   ├── nvim-vanilla/           # Minimal Neovim setupnvs-astro                       # Quick switch to AstroNvim
+
+│   ├── nvim-lazyvim/           # LazyVim configurationnvs-vanilla                     # Quick switch to vanilla
+
+│   └── README.md               # Configuration docsnvs-lazy                        # Quick switch to LazyVim
+
+│
+
+├── flakes/                     # Nix development environments# Maintenance
+
+│   ├── go/                     # Go development environmentnvim-switch backup              # Backup current plugin state
+
+│   ├── python/                 # Python development environmentnvim-switch clean               # Clean plugin data/cache
+
+│   ├── nodejs/                 # Node.js development environmentnvim-switch current             # Show current configuration
+
+│   └── rust/                   # Rust development environment```
+
+│
+
+└── nvim-backups/              # Automatic backups (auto-created)## 📁 Directory Structure
+
 ```
+
+```
+
+## 🔧 Development Environments~/.dotfiles/
+
+├── setup.sh                   # One-command setup script
+
+This dotfiles setup includes Nix flakes for isolated development environments:├── nvim-switch                 # Neovim configuration switcher
+
+├── README.md                   # This file
+
+```bash│
+
+# Enter development environment├── stow/                       # Configurations managed by GNU Stow
+
+dev-go          # Go development│   ├── nvim/                   # AstroNvim configuration (default)
+
+dev-python      # Python development  │   │   └── .config/nvim/
+
+dev-nodejs      # Node.js development│   ├── zsh/                    # ZSH configuration
+
+dev-rust        # Rust development│   │   ├── .zshrc
+
+│   │   └── .zsh/
+
+# Or manually│   ├── git/                    # Git configuration
+
+cd ~/.dotfiles/flakes/go && nix develop│   ├── tmux/                   # Tmux configuration
+
+```│   └── ssh/                    # SSH configuration
+
+│
+
+## 🎨 Customization├── configs/                    # Alternative configurations
+
+│   ├── nvim-astronvim/         # AstroNvim configuration
+
+### Adding New Neovim Configurations│   ├── nvim-vanilla/           # Minimal Neovim setup
+
+│   ├── nvim-lazyvim/           # LazyVim configuration
+
+1. Create a new directory in `configs/`:│   └── README.md               # Configuration docs
+
+   ```bash│
+
+   mkdir ~/.dotfiles/configs/nvim-custom├── flakes/                     # Nix development environments
+
+   ```│   ├── go/                     # Go development environment
+
+│   ├── python/                 # Python development environment
+
+2. Add your `init.lua` and configuration files│   ├── nodejs/                 # Node.js development environment
+
+│   └── rust/                   # Rust development environment
+
+3. Update the `nvim-switch` script to include your new config:│
+
+   ```bash└── nvim-backups/              # Automatic backups (auto-created)
+
+   # Edit the CONFIGS array in nvim-switch```
+
+   "custom:$DOTFILES_DIR/configs/nvim-custom"
+
+   ```## 🔧 Development Environments
+
+
+
+### Customizing ZSHThis dotfiles setup includes Nix flakes for isolated development environments:
+
+
+
+- **Aliases**: Edit `stow/zsh/.zsh/aliases.zsh````bash
+
+- **Functions**: Edit `stow/zsh/.zsh/functions.zsh`# Enter development environment
+
+- **Environment**: Edit `stow/zsh/.zsh/env.zsh`dev-go          # Go development
+
+- **Plugins**: Edit `stow/zsh/.zsh/plugins.zsh`dev-python      # Python development
+
+dev-nodejs      # Node.js development
+
+### Adding New Stow Packagesdev-rust        # Rust development
+
+
+
+1. Create a new directory in `stow/`:# Or manually
+
+   ```bashcd ~/.dotfiles/flakes/go && nix develop
+
+   mkdir ~/.dotfiles/stow/newapp```
+
+   ```
+
+## 🎨 Customization
+
+2. Mirror the home directory structure:
+
+   ```bash### Adding New Neovim Configurations
+
+   mkdir -p ~/.dotfiles/stow/newapp/.config/newapp
+
+   ```1. Create a new directory in `configs/`:
+
+   ```bash
+
+3. Add your configuration files   mkdir ~/.dotfiles/configs/nvim-custom
+
+   ```
+
+4. Stow the package:
+
+   ```bash2. Add your `init.lua` and configuration files
+
+   cd ~/.dotfiles && stow -t ~ stow/newapp
+
+   ```3. Update the `nvim-switch` script to include your new config:
+
+   ```bash
+
+## 🖥️ Platform Support   # Edit the CONFIGS array in nvim-switch
+
+   "custom:$DOTFILES_DIR/configs/nvim-custom"
+
+This dotfiles setup is designed to work across:   ```
+
+
+
+- **macOS** (with Homebrew)### Customizing ZSH
+
+- **Linux** (Ubuntu, Debian, Arch, Fedora)
+
+- **NixOS**- **Aliases**: Edit `stow/zsh/.zsh/aliases.zsh`
+
+- **Functions**: Edit `stow/zsh/.zsh/functions.zsh`
+
+Platform-specific configurations are handled automatically in the ZSH setup.- **Environment**: Edit `stow/zsh/.zsh/env.zsh`
+
+- **Plugins**: Edit `stow/zsh/.zsh/plugins.zsh`
+
+## 🔄 Keeping Updated
+
+### Adding New Stow Packages
+
+```bash
+
+# Update dotfiles repository1. Create a new directory in `stow/`:
+
+cd ~/.dotfiles && git pull   ```bash
+
+   mkdir ~/.dotfiles/stow/newapp
+
+# Update Nix packages (if using Nix)   ```
+
+dotup-pkg
+
+2. Mirror the home directory structure:
+
+# Update all (dotfiles + packages)   ```bash
+
+dotup-all   mkdir -p ~/.dotfiles/stow/newapp/.config/newapp
+
+```   ```
+
+
+
+## 🆘 Troubleshooting3. Add your configuration files
+
+
+
+### Neovim Issues4. Stow the package:
+
+   ```bash
+
+```bash   cd ~/.dotfiles && stow -t ~ stow/newapp
+
+# Check current configuration   ```
+
+nvim-switch current
+
+## 🖥️ Platform Support
+
+# Clean plugin data if switching between configs
+
+nvim-switch cleanThis dotfiles setup is designed to work across:
+
+
+
+# Backup before making changes- **macOS** (with Homebrew)
+
+nvim-switch backup- **Linux** (Ubuntu, Debian, Arch, Fedora)
+
+```- **NixOS**
+
+
+
+### Stow IssuesPlatform-specific configurations are handled automatically in the ZSH setup.
+
+
+
+```bash## 🔄 Keeping Updated
+
+# Check for conflicts
+
+stow -t ~ -n stow/zsh  # Dry run```bash
+
+# Update dotfiles repository
+
+# Force restow if neededcd ~/.dotfiles && git pull
+
+stow -t ~ -R stow/zsh  # Restow (delete and recreate)
+
+```# Update Nix packages (if using Nix)
+
+dotup-pkg
+
+### Shell Issues
+
+# Update all (dotfiles + packages)
+
+```bashdotup-all
+
+# Reload configuration```
+
+source ~/.zshrc
+
+## 🆘 Troubleshooting
+
+# Check if dotfiles are in PATH
+
+echo $PATH | grep dotfiles### Neovim Issues
+
+```
+
+```bash
+
+## 🤝 Contributing# Check current configuration
+
+nvim-switch current
+
+Feel free to:
+
+- Fork this repository# Clean plugin data if switching between configs
+
+- Adapt configurations for your needsnvim-switch clean
+
+- Submit improvements via pull requests
+
+- Report issues or suggestions# Backup before making changes
+
+nvim-switch backup
+
+## 📄 License```
+
+
+
+This project is open source and available under the [MIT License](LICENSE).### Stow Issues
+
+
+
+---```bash
+
+# Check for conflicts
+
+**Happy coding!** 🎉stow -t ~ -n stow/zsh  # Dry run
+
+
+
+> These dotfiles are designed to create a consistent, productive development environment across different machines and platforms. The modular structure makes it easy to pick and choose components that work for your workflow.# Force restow if needed
+stow -t ~ -R stow/zsh  # Restow (delete and recreate)
+```
+
+### Shell Issues
+
+```bash
+# Reload configuration
+source ~/.zshrc
+
+# Check if dotfiles are in PATH
+echo $PATH | grep dotfiles
+```
+
+## 🤝 Contributing
+
+Feel free to:
+- Fork this repository
+- Adapt configurations for your needs
+- Submit improvements via pull requests
+- Report issues or suggestions
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+---
+
+**Happy coding!** 🎉
+
+> These dotfiles are designed to create a consistent, productive development environment across different machines and platforms. The modular structure makes it easy to pick and choose components that work for your workflow.
 
 #### Google Cloud Platform (gcloud)
 ```bash

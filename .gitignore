@@ -1,0 +1,68 @@
+# Neovim plugin directories and caches
+configs/*/lazy-lock.json
+configs/*/.repro/
+stow/nvim/.config/nvim/plugin/
+stow/nvim/.config/nvim/.lazy/
+
+# ZSH plugin directories (these are safe - community plugins)
+stow/zsh/.zsh/plugins/
+
+# Personal and sensitive files
+*.log
+*.secret
+*.key
+*.pem
+.env
+.env.local
+personal/
+PERSONAL_NOTES.md
+
+# Backup directories
+nvim-backups/
+*-backup-*/
+*.backup
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ZSH compiled files
+*.zwc
+.zcompdump*
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Local configuration files (user-specific)
+.zshrc.local
+.gitconfig.local
+.zsh/functions.local.zsh
+
+# Nix result links
+result
+result-*
+
+# Development environment state
+.direnv/
+
+# SSH keys and configs (if accidentally placed here)
+id_*
+known_hosts
+authorized_keys
+
+# Cloud CLI configurations (if accidentally placed here)
+.aws/
+.gcloud/
+.kube/config
+
+# Local development databases
+*.db
+*.sqlite
+*.sqlite3
