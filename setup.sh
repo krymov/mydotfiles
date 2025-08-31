@@ -244,8 +244,17 @@ main() {
     echo "1. Restart your shell or run: source ~/.zshrc"
     echo "2. Use 'nvim-switch list' to see available Neovim configurations"
     echo "3. Use 'nvim-switch switch astronvim' to use AstroNvim"
-    echo "4. Customize configurations in ~/.dotfiles/configs/"
+    echo "4. Set up AI coding assistance: ./ai-keys setup"
+    echo "5. Add AI API keys: ./ai-keys add anthropic"
+    echo "6. Read the guides: ls guides/ or cat guides/README.md"
+    echo "7. Customize configurations in ~/.dotfiles/configs/"
     echo ""
+    echo "📚 Essential reading:"
+    echo "   • Setup Guide: guides/setup-guide.md"
+    echo "   • Daily Workflow: guides/daily-workflow.md"
+    echo "   • AI Features: guides/AI_CODING_GUIDE.md"
+    echo ""
+    echo "🤖 AI-powered coding is ready! Launch nvim and use <leader>aa"
     echo "Happy coding! 🎉"
 }
 

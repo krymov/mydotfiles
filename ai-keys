@@ -1,0 +1,414 @@
+#!/usr/bin/env bash
+# AI API Key Management Script
+# Securely manages API keys for AI providers used in Neovim CodeCompanion
+
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ENV_FILE="$HOME/.config/ai-keys.env"
+ZSH_CONFIG="$HOME/.zshrc"
+
+log_info() {
+    echo -e "${BLUE}ℹ️  $1${NC}"
+}
+
+log_success() {
+    echo -e "${GREEN}✅ $1${NC}"
+}
+
+log_warning() {
+    echo -e "${YELLOW}⚠️  $1${NC}"
+}
+
+log_error() {
+    echo -e "${RED}❌ $1${NC}"
+}
+
+show_help() {
+    cat << EOF
+AI API Key Management for CodeCompanion
+
+Usage: $0 [COMMAND] [OPTIONS]
+
+Commands:
+  setup                Set up API key management
+  add <provider>       Add/update API key for provider
+  remove <provider>    Remove API key for provider
+  list                 List configured providers
+  test                 Test API key connectivity
+  status               Show provider status in Neovim
+  help                 Show this help message
+
+Providers:
+  openai              OpenAI (GPT-4, GPT-4o, etc.)
+  anthropic           Anthropic (Claude 3.5 Sonnet, Haiku)
+  gemini              Google Gemini Pro
+  ollama              Local Ollama setup
+
+Examples:
+  $0 setup                    # Initial setup
+  $0 add openai              # Add OpenAI API key
+  $0 add anthropic           # Add Anthropic API key
+  $0 test openai             # Test OpenAI connection
+  $0 status                  # Check all provider status
+
+Security:
+  - API keys are stored in ~/.config/ai-keys.env
+  - File permissions are set to 600 (user read/write only)
+  - Keys are sourced in .zshrc for Neovim access
+  - Use environment variables, never hardcode keys
+EOF
+}
+
+create_env_file() {
+    if [[ ! -f "$ENV_FILE" ]]; then
+        log_info "Creating AI keys environment file..."
+        cat > "$ENV_FILE" << 'EOF'
+# AI API Keys for CodeCompanion
+# This file contains sensitive API keys - keep it secure!
+# File permissions should be 600 (user read/write only)
+
+# OpenAI API Key
+# Get from: https://platform.openai.com/api-keys
+# export OPENAI_API_KEY="sk-..."
+
+# Anthropic API Key  
+# Get from: https://console.anthropic.com/
+# export ANTHROPIC_API_KEY="sk-ant-..."
+
+# Google Gemini API Key
+# Get from: https://aistudio.google.com/app/apikey
+# export GEMINI_API_KEY="..."
+
+# Add your API keys by uncommenting and filling in the values above
+# or use the 'ai-keys add <provider>' command
+EOF
+        chmod 600 "$ENV_FILE"
+        log_success "Created $ENV_FILE with secure permissions"
+    else
+        log_info "AI keys file already exists at $ENV_FILE"
+    fi
+}
+
+setup_zsh_integration() {
+    if [[ ! -f "$ZSH_CONFIG" ]]; then
+        log_warning ".zshrc not found, please add this to your shell config:"
+        echo "source $ENV_FILE"
+        return
+    fi
+
+    local source_line="source $ENV_FILE"
+    if grep -q "source.*ai-keys.env" "$ZSH_CONFIG"; then
+        log_info "AI keys already sourced in .zshrc"
+    else
+        log_info "Adding AI keys to .zshrc..."
+        echo "" >> "$ZSH_CONFIG"
+        echo "# AI API Keys for CodeCompanion" >> "$ZSH_CONFIG"
+        echo "if [[ -f $ENV_FILE ]]; then" >> "$ZSH_CONFIG"
+        echo "  source $ENV_FILE" >> "$ZSH_CONFIG"
+        echo "fi" >> "$ZSH_CONFIG"
+        log_success "Added AI keys sourcing to .zshrc"
+    fi
+}
+
+add_api_key() {
+    local provider="$1"
+    
+    case "$provider" in
+        "openai")
+            local env_var="OPENAI_API_KEY"
+            local description="OpenAI API Key (starts with sk-)"
+            local url="https://platform.openai.com/api-keys"
+            ;;
+        "anthropic")
+            local env_var="ANTHROPIC_API_KEY"
+            local description="Anthropic API Key (starts with sk-ant-)"
+            local url="https://console.anthropic.com/"
+            ;;
+        "gemini")
+            local env_var="GEMINI_API_KEY"
+            local description="Google Gemini API Key"
+            local url="https://aistudio.google.com/app/apikey"
+            ;;
+        *)
+            log_error "Unknown provider: $provider"
+            echo "Supported providers: openai, anthropic, gemini"
+            exit 1
+            ;;
+    esac
+
+    echo ""
+    echo "Adding $description"
+    echo "Get your API key from: $url"
+    echo ""
+    
+    read -p "Enter your $env_var: " -s api_key
+    echo ""
+    
+    if [[ -z "$api_key" ]]; then
+        log_error "No API key provided"
+        exit 1
+    fi
+    
+    # Validate key format (basic check)
+    case "$provider" in
+        "openai")
+            if [[ ! "$api_key" =~ ^sk- ]]; then
+                log_warning "OpenAI API keys typically start with 'sk-'"
+            fi
+            ;;
+        "anthropic")
+            if [[ ! "$api_key" =~ ^sk-ant- ]]; then
+                log_warning "Anthropic API keys typically start with 'sk-ant-'"
+            fi
+            ;;
+    esac
+    
+    # Add or update the key in the env file
+    if grep -q "^export $env_var=" "$ENV_FILE"; then
+        # Update existing key
+        sed -i.bak "s/^export $env_var=.*/export $env_var=\"$api_key\"/" "$ENV_FILE"
+        log_success "Updated $env_var in $ENV_FILE"
+    elif grep -q "^# export $env_var=" "$ENV_FILE"; then
+        # Uncomment and update
+        sed -i.bak "s/^# export $env_var=.*/export $env_var=\"$api_key\"/" "$ENV_FILE"
+        log_success "Added $env_var to $ENV_FILE"
+    else
+        # Add new key
+        echo "export $env_var=\"$api_key\"" >> "$ENV_FILE"
+        log_success "Added $env_var to $ENV_FILE"
+    fi
+    
+    # Remove backup file
+    rm -f "$ENV_FILE.bak"
+    
+    echo ""
+    echo "To use the new API key:"
+    echo "1. Restart your terminal or run: source $ENV_FILE"
+    echo "2. Launch Neovim and use CodeCompanion"
+    echo "3. Run :CodeCompanionStatus to verify"
+}
+
+remove_api_key() {
+    local provider="$1"
+    
+    case "$provider" in
+        "openai") local env_var="OPENAI_API_KEY" ;;
+        "anthropic") local env_var="ANTHROPIC_API_KEY" ;;
+        "gemini") local env_var="GEMINI_API_KEY" ;;
+        *)
+            log_error "Unknown provider: $provider"
+            exit 1
+            ;;
+    esac
+    
+    if grep -q "^export $env_var=" "$ENV_FILE"; then
+        sed -i.bak "/^export $env_var=/d" "$ENV_FILE"
+        rm -f "$ENV_FILE.bak"
+        log_success "Removed $env_var from $ENV_FILE"
+        echo "Restart your terminal for changes to take effect"
+    else
+        log_warning "$env_var not found in $ENV_FILE"
+    fi
+}
+
+list_providers() {
+    log_info "Configured API providers in $ENV_FILE:"
+    echo ""
+    
+    if [[ -f "$ENV_FILE" ]]; then
+        local found=false
+        while IFS= read -r line; do
+            if [[ "$line" =~ ^export\ ([A-Z_]+)= ]]; then
+                local var_name="${BASH_REMATCH[1]}"
+                case "$var_name" in
+                    "OPENAI_API_KEY") echo "  ✓ OpenAI (GPT-4, GPT-4o)" ;;
+                    "ANTHROPIC_API_KEY") echo "  ✓ Anthropic (Claude 3.5)" ;;
+                    "GEMINI_API_KEY") echo "  ✓ Google Gemini" ;;
+                esac
+                found=true
+            fi
+        done < "$ENV_FILE"
+        
+        if [[ "$found" == false ]]; then
+            echo "  No API keys configured yet"
+            echo "  Use '$0 add <provider>' to add keys"
+        fi
+    else
+        echo "  No configuration file found"
+        echo "  Run '$0 setup' first"
+    fi
+    
+    echo ""
+    echo "Ollama (local): Run 'ollama serve' to enable local models"
+}
+
+test_connectivity() {
+    local provider="$1"
+    
+    # Source the env file to get current keys
+    if [[ -f "$ENV_FILE" ]]; then
+        source "$ENV_FILE"
+    fi
+    
+    case "$provider" in
+        "openai")
+            if [[ -z "$OPENAI_API_KEY" ]]; then
+                log_error "OPENAI_API_KEY not set"
+                exit 1
+            fi
+            log_info "Testing OpenAI API connection..."
+            curl -s -H "Authorization: Bearer $OPENAI_API_KEY" \
+                 -H "Content-Type: application/json" \
+                 https://api.openai.com/v1/models >/dev/null 2>&1
+            if [[ $? -eq 0 ]]; then
+                log_success "OpenAI API connection successful"
+            else
+                log_error "OpenAI API connection failed"
+            fi
+            ;;
+        "anthropic")
+            if [[ -z "$ANTHROPIC_API_KEY" ]]; then
+                log_error "ANTHROPIC_API_KEY not set"
+                exit 1
+            fi
+            log_info "Testing Anthropic API connection..."
+            # Anthropic doesn't have a simple test endpoint, so we'll just validate the key format
+            if [[ "$ANTHROPIC_API_KEY" =~ ^sk-ant- ]]; then
+                log_success "Anthropic API key format looks correct"
+            else
+                log_warning "Anthropic API key format may be incorrect"
+            fi
+            ;;
+        "gemini")
+            if [[ -z "$GEMINI_API_KEY" ]]; then
+                log_error "GEMINI_API_KEY not set"
+                exit 1
+            fi
+            log_info "Testing Gemini API connection..."
+            # Simple test request to Gemini
+            curl -s "https://generativelanguage.googleapis.com/v1/models?key=$GEMINI_API_KEY" >/dev/null 2>&1
+            if [[ $? -eq 0 ]]; then
+                log_success "Gemini API connection successful"
+            else
+                log_error "Gemini API connection failed"
+            fi
+            ;;
+        "ollama")
+            log_info "Testing Ollama local connection..."
+            curl -s http://localhost:11434/api/tags >/dev/null 2>&1
+            if [[ $? -eq 0 ]]; then
+                log_success "Ollama is running and accessible"
+                local models=$(curl -s http://localhost:11434/api/tags | grep -o '"name":"[^"]*"' | cut -d'"' -f4 | head -3)
+                if [[ -n "$models" ]]; then
+                    echo "Available models: $(echo $models | tr '\n' ', ' | sed 's/,$//')"
+                fi
+            else
+                log_error "Ollama not running. Start with: ollama serve"
+            fi
+            ;;
+        *)
+            log_error "Unknown provider: $provider"
+            echo "Supported providers: openai, anthropic, gemini, ollama"
+            exit 1
+            ;;
+    esac
+}
+
+test_all() {
+    log_info "Testing all configured providers..."
+    echo ""
+    
+    # Source env file
+    if [[ -f "$ENV_FILE" ]]; then
+        source "$ENV_FILE"
+    fi
+    
+    # Test each provider if configured
+    [[ -n "$OPENAI_API_KEY" ]] && test_connectivity "openai"
+    [[ -n "$ANTHROPIC_API_KEY" ]] && test_connectivity "anthropic"  
+    [[ -n "$GEMINI_API_KEY" ]] && test_connectivity "gemini"
+    test_connectivity "ollama"
+}
+
+show_nvim_status() {
+    echo "To check AI provider status in Neovim:"
+    echo ""
+    echo "1. Open Neovim"
+    echo "2. Run: :CodeCompanionStatus"
+    echo "3. Or use keybinding: <leader>as"
+    echo ""
+    echo "Available keybindings in Neovim:"
+    echo "  <leader>aa  - AI action palette"
+    echo "  <leader>ac  - Toggle AI chat"
+    echo "  <leader>ar  - Refactor agent"
+    echo "  <leader>at  - Test generation agent"
+    echo "  <leader>av  - Code review agent"
+    echo "  <leader>ad  - Documentation agent"
+    echo "  <leader>aD  - Debug agent"
+    echo "  <leader>aP  - Architecture agent"
+}
+
+setup_complete() {
+    create_env_file
+    setup_zsh_integration
+    
+    echo ""
+    log_success "AI API key management setup complete!"
+    echo ""
+    echo "Next steps:"
+    echo "1. Add API keys: $0 add openai"
+    echo "2. Test connectivity: $0 test openai"
+    echo "3. Install Ollama for local models: brew install ollama"
+    echo "4. Restart terminal or source: source $ENV_FILE"
+    echo "5. Launch Neovim and use CodeCompanion!"
+    echo ""
+    echo "For help: $0 help"
+}
+
+# Main command handling
+case "${1:-help}" in
+    "setup")
+        setup_complete
+        ;;
+    "add")
+        if [[ -z "$2" ]]; then
+            log_error "Please specify a provider"
+            echo "Usage: $0 add <provider>"
+            echo "Providers: openai, anthropic, gemini"
+            exit 1
+        fi
+        create_env_file
+        add_api_key "$2"
+        ;;
+    "remove")
+        if [[ -z "$2" ]]; then
+            log_error "Please specify a provider"
+            exit 1
+        fi
+        remove_api_key "$2"
+        ;;
+    "list")
+        list_providers
+        ;;
+    "test")
+        if [[ -z "$2" ]]; then
+            test_all
+        else
+            test_connectivity "$2"
+        fi
+        ;;
+    "status")
+        show_nvim_status
+        ;;
+    "help"|*)
+        show_help
+        ;;
+esac
