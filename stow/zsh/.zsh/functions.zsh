@@ -155,6 +155,116 @@ dirsize() {
   du -sh "${1:-.}" | sort -hr
 }
 
+# Cloud and DevOps functions
+
+# Kubernetes context switching with fuzzy finder
+kctx() {
+  if command -v kubectl >/dev/null && command -v fzf >/dev/null; then
+    local context
+    context=$(kubectl config get-contexts -o name | fzf --prompt="Select kubectl context: ")
+    if [[ -n "$context" ]]; then
+      kubectl config use-context "$context"
+      echo "Switched to context: $context"
+    fi
+  else
+    echo "kubectl and fzf are required for this function"
+  fi
+}
+
+# Kubernetes namespace switching with fuzzy finder
+knsf() {
+  if command -v kubectl >/dev/null && command -v fzf >/dev/null; then
+    local namespace
+    namespace=$(kubectl get namespaces -o name | sed 's/namespace\///' | fzf --prompt="Select namespace: ")
+    if [[ -n "$namespace" ]]; then
+      kubectl config set-context --current --namespace="$namespace"
+      echo "Switched to namespace: $namespace"
+    fi
+  else
+    echo "kubectl and fzf are required for this function"
+  fi
+}
+
+# Get pod logs with fuzzy selection
+klogs() {
+  if command -v kubectl >/dev/null && command -v fzf >/dev/null; then
+    local pod
+    pod=$(kubectl get pods -o name | sed 's/pod\///' | fzf --prompt="Select pod for logs: ")
+    if [[ -n "$pod" ]]; then
+      kubectl logs "$pod" "${@}"
+    fi
+  else
+    echo "kubectl and fzf are required for this function"
+  fi
+}
+
+# Execute into pod with fuzzy selection
+kexec() {
+  if command -v kubectl >/dev/null && command -v fzf >/dev/null; then
+    local pod
+    pod=$(kubectl get pods -o name | sed 's/pod\///' | fzf --prompt="Select pod to exec into: ")
+    if [[ -n "$pod" ]]; then
+      kubectl exec -it "$pod" -- "${@:-/bin/bash}"
+    fi
+  else
+    echo "kubectl and fzf are required for this function"
+  fi
+}
+
+# Google Cloud project switching with fuzzy finder
+gcproj() {
+  if command -v gcloud >/dev/null && command -v fzf >/dev/null; then
+    local project
+    project=$(gcloud projects list --format="value(projectId)" | fzf --prompt="Select GCP project: ")
+    if [[ -n "$project" ]]; then
+      gcloud config set project "$project"
+      echo "Switched to project: $project"
+    fi
+  else
+    echo "gcloud and fzf are required for this function"
+  fi
+}
+
+# AWS profile switching with fuzzy finder
+awsprof() {
+  if command -v aws >/dev/null && command -v fzf >/dev/null; then
+    local profile
+    profile=$(aws configure list-profiles | fzf --prompt="Select AWS profile: ")
+    if [[ -n "$profile" ]]; then
+      export AWS_PROFILE="$profile"
+      echo "Switched to AWS profile: $profile"
+    fi
+  else
+    echo "aws and fzf are required for this function"
+  fi
+}
+
+# Docker container management
+dsh() {
+  if command -v docker >/dev/null && command -v fzf >/dev/null; then
+    local container
+    container=$(docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}" | tail -n +2 | fzf --prompt="Select container: " | awk '{print $1}')
+    if [[ -n "$container" ]]; then
+      docker exec -it "$container" "${@:-/bin/bash}"
+    fi
+  else
+    echo "docker and fzf are required for this function"
+  fi
+}
+
+# Docker logs with fuzzy selection
+dlogs() {
+  if command -v docker >/dev/null && command -v fzf >/dev/null; then
+    local container
+    container=$(docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}" | tail -n +2 | fzf --prompt="Select container for logs: " | awk '{print $1}')
+    if [[ -n "$container" ]]; then
+      docker logs -f "$container" "${@}"
+    fi
+  else
+    echo "docker and fzf are required for this function"
+  fi
+}
+
 # Platform-specific functions
 case "$PLATFORM" in
   "macos")

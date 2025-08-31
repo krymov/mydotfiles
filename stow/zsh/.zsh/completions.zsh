@@ -1,10 +1,12 @@
 # Enhanced completions for cross-platform tools
 
-# Note: compinit is handled automatically by znap
-# Only run compinit manually if znap is not available
-if [[ ! -f "$HOME/.znap/znap.zsh" ]]; then
-    autoload -Uz compinit
-    compinit -u
+# Initialize completion system
+autoload -Uz compinit
+# Only run compinit if needed (for performance)
+if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
+  compinit
+else
+  compinit -C
 fi
 
 # Completion styling
@@ -57,8 +59,52 @@ fi
 # Kubectl completion
 if command -v kubectl >/dev/null; then
   source <(kubectl completion zsh)
-  alias k=kubectl
-  complete -F __start_kubectl k
+  # Enable completion for k alias
+  compdef k=kubectl
+fi
+
+# Google Cloud completion
+if command -v gcloud >/dev/null; then
+  # Source gcloud completion if available
+  if [[ -f "/opt/homebrew/share/google-cloud-sdk/completion.zsh.inc" ]]; then
+    source "/opt/homebrew/share/google-cloud-sdk/completion.zsh.inc"
+  elif [[ -f "/usr/share/google-cloud-sdk/completion.zsh.inc" ]]; then
+    source "/usr/share/google-cloud-sdk/completion.zsh.inc"
+  elif [[ -f "$HOME/.nix-profile/share/google-cloud-sdk/completion.zsh.inc" ]]; then
+    source "$HOME/.nix-profile/share/google-cloud-sdk/completion.zsh.inc"
+  fi
+fi
+
+# AWS CLI completion
+if command -v aws >/dev/null; then
+  # AWS CLI v2 completion
+  if command -v aws_completer >/dev/null; then
+    autoload -U bashcompinit && bashcompinit
+    complete -C aws_completer aws
+  fi
+fi
+
+# Docker completion
+if command -v docker >/dev/null; then
+  # Docker completion for macOS (Homebrew)
+  if [[ -f "/opt/homebrew/share/zsh/site-functions/_docker" ]]; then
+    autoload -U "/opt/homebrew/share/zsh/site-functions/_docker"
+  # Docker completion for Linux/NixOS
+  elif [[ -f "$HOME/.nix-profile/share/zsh/site-functions/_docker" ]]; then
+    autoload -U "$HOME/.nix-profile/share/zsh/site-functions/_docker"
+  elif [[ -f "/usr/share/zsh/vendor-completions/_docker" ]]; then
+    autoload -U "/usr/share/zsh/vendor-completions/_docker"
+  fi
+fi
+
+# Terraform completion
+if command -v terraform >/dev/null; then
+  terraform -install-autocomplete 2>/dev/null || true
+fi
+
+# Helm completion
+if command -v helm >/dev/null; then
+  source <(helm completion zsh)
 fi
 
 # Nix completion
@@ -97,25 +143,3 @@ if [[ -f ~/.ssh/config ]]; then
   }
   compdef _ssh_config_hosts ssh
 fi
-
-# Enable completion for aliases
-setopt complete_aliases
-
-# Case-insensitive completion
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-
-# Fuzzy matching of completions
-zstyle ':completion:*' completer _complete _match _approximate
-zstyle ':completion:*:match:*' original only
-zstyle ':completion:*:approximate:*' max-errors 1 numeric
-
-# Ignore completion for commands we don't have
-zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec))'
-
-# Speed up completions
-zstyle ':completion:*' accept-exact '*(N)'
-zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path ~/.zsh/cache
-
-# Create cache directory if it doesn't exist
-[[ ! -d ~/.zsh/cache ]] && mkdir -p ~/.zsh/cache

@@ -1,24 +1,47 @@
-# Minimal plugin configuration for maximum stability
+# Enhanced plugin configuration for maximum stability and reliability
 
-# Only use znap if git is available and working
+# Plugin directory
+ZSH_PLUGINS_DIR="$HOME/.zsh/plugins"
+mkdir -p "$ZSH_PLUGINS_DIR"
+
+# Function to install plugin if not present (used for initial setup)
+# Note: Plugins are now included in the dotfiles repo, so this mainly serves
+# as a fallback for missing plugins or when setting up on a new machine
+install_plugin() {
+  local plugin_url="$1"
+  local plugin_name="$(basename "$plugin_url")"
+  local plugin_dir="$ZSH_PLUGINS_DIR/$plugin_name"
+
+  if [[ ! -d "$plugin_dir" ]]; then
+    echo "Installing $plugin_name..."
+    git clone --depth 1 --quiet "$plugin_url" "$plugin_dir" 2>/dev/null || {
+      echo "Failed to install $plugin_name"
+      return 1
+    }
+    # Remove .git directory to avoid submodule issues
+    rm -rf "$plugin_dir/.git"
+  fi
+}
+
+# Install essential plugins if git is available
 if command -v git >/dev/null 2>&1; then
-  # Bootstrap znap if not present
-  if [[ ! -f "$HOME/.znap/znap.zsh" ]]; then
-    echo "Installing znap plugin manager..."
-    if git clone --depth 1 --quiet https://github.com/marlonrichert/zsh-snap.git "$HOME/.znap" 2>/dev/null; then
-      echo "znap installed successfully"
-    else
-      echo "Warning: znap installation failed, using minimal configuration"
-    fi
+  install_plugin "https://github.com/zsh-users/zsh-autosuggestions"
+  install_plugin "https://github.com/zsh-users/zsh-syntax-highlighting"
+  install_plugin "https://github.com/zsh-users/zsh-history-substring-search"
+
+  # Load autosuggestions
+  if [[ -f "$ZSH_PLUGINS_DIR/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+    source "$ZSH_PLUGINS_DIR/zsh-autosuggestions/zsh-autosuggestions.zsh"
   fi
 
-  # Load znap and essential plugins only
-  if [[ -f "$HOME/.znap/znap.zsh" ]]; then
-    source "$HOME/.znap/znap.zsh"
+  # Load syntax highlighting (must be loaded last)
+  if [[ -f "$ZSH_PLUGINS_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+    source "$ZSH_PLUGINS_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+  fi
 
-    # Essential plugins only
-    znap source zsh-users/zsh-autosuggestions 2>/dev/null || true
-    znap source zsh-users/zsh-syntax-highlighting 2>/dev/null || true
+  # Load history substring search
+  if [[ -f "$ZSH_PLUGINS_DIR/zsh-history-substring-search/zsh-history-substring-search.zsh" ]]; then
+    source "$ZSH_PLUGINS_DIR/zsh-history-substring-search/zsh-history-substring-search.zsh"
   fi
 fi
 
@@ -32,18 +55,9 @@ if command -v fzf >/dev/null; then
     source "$HOME/.nix-profile/share/fzf/completion.zsh"
   fi
 
-  # Custom FZF functions
-  # Ctrl+R for command history with fzf
-  __fzf_history__() {
-    local selected
-    selected=$(fc -rl 1 | fzf +s --tac +m -n2..,.. --tiebreak=index --toggle-sort=ctrl-r -q "${LBUFFER//$/\\$}")
-    if [[ -n "$selected" ]]; then
-      LBUFFER=$(echo "$selected" | sed 's/^[[:space:]]*[0-9]*\*\?[[:space:]]*//')
-    fi
-    zle redisplay
-  }
-  zle -N __fzf_history__
-  bindkey '^R' __fzf_history__
+  # Use standard FZF history widget instead of custom one
+  # The standard fzf-history-widget is usually better at filtering
+  # and doesn't interfere with vim/editor commands
 fi
 
 # History substring search configuration
@@ -55,15 +69,6 @@ if zle -la | grep -q "history-substring-search"; then
 fi
 
 # Autosuggestions configuration
-if [[ -n "${ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE:-}" ]]; then
-  ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=8"
-  ZSH_AUTOSUGGEST_STRATEGY=(history completion)
-fi
-
-# History substring search (if plugin is available)
-if zle -la | grep -q "history-substring-search"; then
-  bindkey '^[[A' history-substring-search-up
-  bindkey '^[[B' history-substring-search-down
-  bindkey '^P' history-substring-search-up
-  bindkey '^N' history-substring-search-down
-fi
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=8"
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20

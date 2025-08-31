@@ -5,7 +5,9 @@
 # zmodload zsh/zprof
 
 # Shell options
-setopt promptsubst autocd correct
+setopt promptsubst autocd
+# Disable aggressive spell correction - it interferes with aliases and cloud CLI tools
+# setopt correct
 setopt hist_ignore_all_dups share_history inc_append_history
 setopt hist_verify hist_expire_dups_first
 setopt extended_glob nomatch notify
@@ -15,6 +17,9 @@ setopt auto_pushd pushd_ignore_dups pushd_minus
 HISTFILE=${HOME}/.zsh_history
 HISTSIZE=50000
 SAVEHIST=50000
+
+# History filtering - exclude certain patterns from being saved
+HISTORY_IGNORE='(ls|ll|la|pwd|exit|clear|history|cd|cd ..|cd -|q|wq|ZZ)'
 
 # Platform detection and flags
 case "$OSTYPE" in
@@ -104,16 +109,23 @@ setopt PROMPT_SUBST
 
 # Configure git info
 zstyle ':vcs_info:*' enable git
-zstyle ':vcs_info:git:*' formats ' (%{$fg[red]%}%b%{$reset_color%})'
-zstyle ':vcs_info:git:*' actionformats ' (%{$fg[red]%}%b%{$reset_color%}|%{$fg[yellow]%}%a%{$reset_color%})'
+zstyle ':vcs_info:git:*' formats ' (%F{red}%b%f)'
+zstyle ':vcs_info:git:*' actionformats ' (%F{red}%b%f|%F{yellow}%a%f)'
 
-# Function to get git info
-precmd() {
+# Custom precmd function
+my_precmd() {
   vcs_info
+  # Force reset PS1 in case VS Code tries to override it
+  PS1='%F{cyan}%n%f@%F{yellow}%m%f %F{green}%1~%f${vcs_info_msg_0_} %# '
 }
 
-# Clean, informative prompt
-PS1='%{$fg[cyan]%}%n%{$reset_color%}@%{$fg[yellow]%}%m%{$reset_color%} %{$fg[green]%}%1~%{$reset_color%}${vcs_info_msg_0_} %# '
+# Clear any existing precmd functions that might interfere
+precmd_functions=()
+# Add our function
+precmd_functions+=(my_precmd)
+
+# Set initial prompt
+PS1='%F{cyan}%n%f@%F{yellow}%m%f %F{green}%1~%f${vcs_info_msg_0_} %# '
 
 # Load local machine-specific configuration (not tracked in git)
 [[ -r "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"

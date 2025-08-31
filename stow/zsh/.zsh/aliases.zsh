@@ -62,6 +62,101 @@ fi
 # Kubernetes (if used)
 if command -v kubectl >/dev/null; then
   alias k='kubectl'
+  alias kgp='kubectl get pods'
+  alias kgs='kubectl get services'
+  alias kgd='kubectl get deployments'
+  alias kgn='kubectl get nodes'
+  alias kga='kubectl get all'
+  alias kdp='kubectl describe pod'
+  alias kds='kubectl describe service'
+  alias kdd='kubectl describe deployment'
+  alias kdn='kubectl describe node'
+  alias kaf='kubectl apply -f'
+  alias kdf='kubectl delete -f'
+  alias kcf='kubectl create -f'
+  alias keti='kubectl exec -ti'
+  alias kccc='kubectl config current-context'
+  alias kcdc='kubectl config delete-context'
+  alias kcsc='kubectl config set-context'
+  alias kcuc='kubectl config use-context'
+  alias kcci='kubectl cluster-info'
+  alias kcgc='kubectl config get-contexts'
+  alias kns='kubectl config set-context --current --namespace'
+fi
+
+# Google Cloud Platform (if used)
+if command -v gcloud >/dev/null; then
+  alias gc='gcloud'
+  alias gce='gcloud compute'
+  alias gcei='gcloud compute instances'
+  alias gcel='gcloud compute instances list'
+  alias gces='gcloud compute instances start'
+  alias gcest='gcloud compute instances stop'
+  alias gceip='gcloud compute addresses list'
+  alias gcssh='gcloud compute ssh'
+  alias gcp='gcloud config set project'
+  alias gcpl='gcloud projects list'
+  alias gcsl='gcloud config list'
+  alias gcsc='gcloud config configurations list'
+  alias gcsa='gcloud config configurations activate'
+fi
+
+# AWS CLI (if used)
+if command -v aws >/dev/null; then
+  alias awsp='export AWS_PROFILE'
+  alias awspl='aws configure list-profiles'
+  alias awssl='aws s3 ls'
+  alias awsec2='aws ec2 describe-instances'
+  alias awsiam='aws iam'
+  alias awslogs='aws logs'
+fi
+
+# Docker shortcuts (if Docker is available)
+if command -v docker >/dev/null; then
+  alias d='docker'
+  alias dc='docker-compose'
+  alias dps='docker ps'
+  alias dpa='docker ps -a'
+  alias di='docker images'
+  alias drmf='docker system prune -f'
+  alias dlog='docker logs'
+  alias dexec='docker exec -it'
+  alias dbuild='docker build'
+  alias dpull='docker pull'
+  alias dpush='docker push'
+  alias drun='docker run'
+  alias dstop='docker stop'
+  alias dstart='docker start'
+  alias drm='docker rm'
+  alias drmi='docker rmi'
+fi
+
+# Terraform (if used)
+if command -v terraform >/dev/null; then
+  alias tf='terraform'
+  alias tfi='terraform init'
+  alias tfp='terraform plan'
+  alias tfa='terraform apply'
+  alias tfd='terraform destroy'
+  alias tfs='terraform show'
+  alias tfv='terraform validate'
+  alias tff='terraform fmt'
+  alias tfw='terraform workspace'
+  alias tfws='terraform workspace select'
+  alias tfwl='terraform workspace list'
+fi
+
+# Helm (if used)
+if command -v helm >/dev/null; then
+  alias h='helm'
+  alias hl='helm list'
+  alias hi='helm install'
+  alias hu='helm upgrade'
+  alias hd='helm delete'
+  alias hs='helm search'
+  alias hr='helm repo'
+  alias hrl='helm repo list'
+  alias hru='helm repo update'
 fi
 
 # tmux aliases
@@ -142,3 +237,9 @@ alias docs='cd ~/Documents'
 alias vimrc='$EDITOR ~/.config/nvim/init.lua'
 alias zshrc='$EDITOR ~/.zshrc'
 alias tmuxrc='$EDITOR ~/.tmux.conf'
+
+# VS Code aliases
+if [[ -d "/Applications/Visual Studio Code - Insiders.app" ]]; then
+  alias code-insiders='"/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin/code"'
+  alias code='code-insiders'  # Use insiders as default code command
+fi
