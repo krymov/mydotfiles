@@ -2,8 +2,8 @@
   # Set these values after setup:
   # git config --global user.name "Your Name"
   # git config --global user.email "your@email.com"
-  name =
-  email =
+	name = Mark Krymov
+	email = krymov@gmail.com
 
 [core]
   editor = nvim

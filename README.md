@@ -82,29 +82,37 @@ The setup script will check for these and guide you through installation:## 🚀
 
 ### Optional but Recommended
 
-- [Nix](https://nixos.org/) - Package management and development environments## 📦 Quick Setup
-
+- [Nix](https://nixos.org/) - Package management and development environments
 - [fzf](https://github.com/junegunn/fzf) - Fuzzy finder
+- [eza](https://github.com/eza-community/eza) - Modern ls replacement
+- [bat](https://github.com/sharkdp/bat) - Better cat with syntax highlighting
 
-- [eza](https://github.com/eza-community/eza) - Modern ls replacement1. **Clone this repository:**
+## 📦 Quick Setup
 
-- [bat](https://github.com/sharkdp/bat) - Better cat with syntax highlighting   ```bash
-
+1. **Clone this repository:**
+   ```bash
    git clone https://github.com/krymov/mydotfiles.git ~/.dotfiles
-
-## 🎯 Neovim Configuration Switcher   cd ~/.dotfiles
-
+   cd ~/.dotfiles
    ```
+
+2. **Configure git (first time only):**
+   ```bash
+   git config --global user.name "Your Name"
+   git config --global user.email "your.email@example.com"
+   ```
+
+3. **Run the setup script:**
+   ```bash
+   ./setup.sh
+   ```
+
+## 🎯 Neovim Configuration Switcher
 
 Easily switch between different Neovim configurations:
 
-2. **Run the setup script:**
-
-```bash   ```bash
-
-# List available configurations   ./setup.sh
-
-nvim-switch list   ```
+```bash
+# List available configurations
+nvim-switch list
 
 
 

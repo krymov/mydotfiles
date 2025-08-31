@@ -8,7 +8,38 @@ set -e
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
+BLUcheck_git_config() {
+    log_info "Checking Git configuration..."
+
+    local needs_config=false
+
+    if ! git config --global user.name >/dev/null 2>&1; then
+        log_warning "Git user.name not set"
+        needs_config=true
+    fi
+
+    if ! git config --global user.email >/dev/null 2>&1; then
+        log_warning "Git user.email not set"
+        needs_config=true
+    fi
+
+    if [ "$needs_config" = true ]; then
+        echo
+        echo "📧 Git configuration required for this repository."
+        echo "   This ensures proper commit attribution."
+        echo
+        echo "Please run these commands to configure git:"
+        if ! git config --global user.name >/dev/null 2>&1; then
+            echo "   git config --global user.name \"Your Name\""
+        fi
+        if ! git config --global user.email >/dev/null 2>&1; then
+            echo "   git config --global user.email \"your.email@example.com\""
+        fi
+        echo
+        echo "Then re-run this setup script if needed."
+        echo
+    fi
+}'
 NC='\033[0m' # No Color
 
 # Get the directory where this script is located
