@@ -1,0 +1,5 @@
+# Example server configuration
+# Copy this to 'server' and modify with your Bitwarden server URL
+# For Bitwarden cloud: https://vault.bitwarden.com
+# For self-hosted: https://your-vaultwarden-instance.com
+https://vault.bitwarden.com

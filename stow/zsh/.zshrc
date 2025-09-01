@@ -127,6 +127,19 @@ precmd_functions+=(my_precmd)
 # Set initial prompt
 PS1='%F{cyan}%n%f@%F{yellow}%m%f %F{green}%1~%f${vcs_info_msg_0_} %# '
 
+# Bitwarden workspace integration
+if [[ -f "$HOME/.local/bin/bw-session.sh" ]]; then
+  source "$HOME/.local/bin/bw-session.sh"
+fi
+
+if [[ -f "$HOME/.local/bin/bw-helpers.sh" ]]; then
+  source "$HOME/.local/bin/bw-helpers.sh"
+fi
+
+if [[ -f "$HOME/.local/bin/bw-workspace.sh" ]]; then
+  source "$HOME/.local/bin/bw-workspace.sh"
+fi
+
 # Load local machine-specific configuration (not tracked in git)
 [[ -r "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
 
@@ -135,3 +148,6 @@ PS1='%F{cyan}%n%f@%F{yellow}%m%f %F{green}%1~%f${vcs_info_msg_0_} %# '
 
 # Dotfiles PATH
 export PATH="/Users/mark/.dotfiles:$PATH"
+
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C /Users/mark/.nix-profile/bin/terraform terraform

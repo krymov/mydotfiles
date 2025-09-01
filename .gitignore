@@ -66,3 +66,6 @@ authorized_keys
 *.db
 *.sqlite
 *.sqlite3
+stow/bitwarden/.config/bitwarden/session
+stow/bitwarden/.config/bitwarden/workspace
+stow/bitwarden/.config/bitwarden/server

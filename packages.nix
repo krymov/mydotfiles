@@ -6,6 +6,9 @@
 let
   # Core development tools
   corePackages = with pkgs; [
+
+    qsv
+    tidy-viewer
     # Shell and terminal
     zsh
     tmux
