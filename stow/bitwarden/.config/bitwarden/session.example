@@ -1,4 +1,0 @@
-# Session token storage
-# This file contains your temporary Bitwarden session token
-# IT SHOULD NEVER BE COMMITTED TO GIT
-# The file is automatically created and managed by bw-session.sh

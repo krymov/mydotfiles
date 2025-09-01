@@ -42,12 +42,22 @@ esac
 
 # PATH management (keep it clean and predictable)
 typeset -U path  # Remove duplicates
+
+# Nix-first strategy: prioritize Nix packages over Homebrew
 path=(
   "$HOME/.local/bin"
   "$HOME/bin"
-  "$HOME/.nix-profile/bin"
-  "/nix/var/nix/profiles/default/bin"
-  $path
+  "$HOME/.nix-profile/bin"              # Nix user packages (highest priority)
+  "/nix/var/nix/profiles/default/bin"   # Nix system packages
+  "$HOME/.dotfiles"                      # Dotfiles scripts
+  "/opt/homebrew/bin"                    # Homebrew packages (lower priority)
+  "/opt/homebrew/sbin"
+  "/usr/local/bin"                       # Legacy Homebrew location
+  "/usr/bin"                             # System packages
+  "/bin"
+  "/usr/sbin"
+  "/sbin"
+  $path                                  # Any remaining paths
 )
 export PATH
 
@@ -126,19 +136,6 @@ precmd_functions+=(my_precmd)
 
 # Set initial prompt
 PS1='%F{cyan}%n%f@%F{yellow}%m%f %F{green}%1~%f${vcs_info_msg_0_} %# '
-
-# Bitwarden workspace integration
-if [[ -f "$HOME/.local/bin/bw-session.sh" ]]; then
-  source "$HOME/.local/bin/bw-session.sh"
-fi
-
-if [[ -f "$HOME/.local/bin/bw-helpers.sh" ]]; then
-  source "$HOME/.local/bin/bw-helpers.sh"
-fi
-
-if [[ -f "$HOME/.local/bin/bw-workspace.sh" ]]; then
-  source "$HOME/.local/bin/bw-workspace.sh"
-fi
 
 # Load local machine-specific configuration (not tracked in git)
 [[ -r "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"

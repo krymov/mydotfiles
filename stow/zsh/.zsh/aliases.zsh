@@ -251,19 +251,16 @@ if [[ -d "/Applications/Visual Studio Code - Insiders.app" ]]; then
   alias code='code-insiders'  # Use insiders as default code command
 fi
 
-# Bitwarden workspace helpers
-if command -v bw >/dev/null; then
-  alias bwl='bw_login'
-  alias bws='bw_switch'
-  alias bwc='bw_check'
-  alias bwls='bw_list_clients'
-  alias bwenv='bw_export_env'
-  alias bwaws='bw_aws_creds'
-  alias bwserver='bw_config_server'
-  alias bwt='bw_interactive_template'
-  alias bwswitch='bw_switch_project'
-  alias bwnew='bw_new_project'
-  alias bwcontext='bw_context'
-  alias bwsave='bw_save_env'
-  alias bwload='bw_load_env'
+# Data processing tool aliases
+if command -v tidy-viewer >/dev/null; then
+  alias tv='tidy-viewer'  # Short alias for table viewing
 fi
+
+if command -v visidata >/dev/null; then
+  alias vd='visidata'     # Ensure vd alias exists
+fi
+
+# Quick data exploration aliases
+alias qstats='qsv stats'
+alias qheaders='qsv headers'
+alias qcount='qsv count'

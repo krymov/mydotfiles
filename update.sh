@@ -100,17 +100,37 @@ update_dotfiles() {
         return 1
     fi
 
-    # Stash any local changes
-    if ! git diff --quiet; then
-        log_warning "Local changes detected, stashing..."
-        git stash push -m "Auto-stash before update $(date)"
+    # Check for local changes and handle them
+    if ! git diff --quiet || ! git diff --cached --quiet; then
+        log_warning "Local changes detected..."
+        
+        # Try to stash changes
+        if ! git stash push -m "Auto-stash before update $(date)" 2>/dev/null; then
+            log_warning "Could not stash changes automatically. Trying reset..."
+            
+            # Reset any staged changes that might be causing conflicts
+            git reset HEAD . 2>/dev/null || true
+            
+            # Try stash again
+            if ! git stash push -m "Auto-stash before update $(date)" 2>/dev/null; then
+                log_warning "Still cannot stash. Will try to pull anyway..."
+            fi
+        fi
     fi
 
     # Pull latest changes
-    git pull || {
-        log_error "Failed to pull from git"
-        return 1
-    }
+    if ! git pull; then
+        log_warning "Git pull failed. Trying to resolve..."
+        
+        # Try to reset any problematic index state
+        git reset --hard HEAD 2>/dev/null || true
+        
+        # Try pull again
+        if ! git pull; then
+            log_error "Failed to pull from git after reset"
+            return 1
+        fi
+    fi
 
     log_success "Dotfiles updated from git"
 
