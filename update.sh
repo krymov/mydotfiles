@@ -137,7 +137,7 @@ update_dotfiles() {
     # Re-stow configurations
     log_info "Re-stowing configurations..."
 
-    STOW_MODULES="zsh tmux git nvim"
+    STOW_MODULES="zsh tmux git nvim ssh bitwarden"
     if [[ "$PLATFORM" == "nixos" || "$PLATFORM" == "linux" ]] && [[ -d stow/kitty ]]; then
         STOW_MODULES="$STOW_MODULES kitty"
     fi

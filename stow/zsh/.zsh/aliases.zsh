@@ -264,3 +264,33 @@ fi
 alias qstats='qsv stats'
 alias qheaders='qsv headers'
 alias qcount='qsv count'
+
+# Bitwarden CLI helpers
+if command -v bw >/dev/null; then
+  # Source helper functions
+  alias bw-source='source ~/.local/bin/bw-helpers.sh'
+  
+  # Bitwarden session management
+  alias bws='~/.local/bin/bw-session.sh'
+  alias bws-save='~/.local/bin/bw-session.sh save'
+  alias bws-load='~/.local/bin/bw-session.sh load'
+  alias bws-clear='~/.local/bin/bw-session.sh clear'
+  alias bws-status='~/.local/bin/bw-session.sh status'
+  
+  # Bitwarden workspace management
+  alias bww='~/.local/bin/bw-workspace.sh'
+  alias bww-list='~/.local/bin/bw-workspace.sh list'
+  alias bww-switch='~/.local/bin/bw-workspace.sh switch'
+  alias bww-add='~/.local/bin/bw-workspace.sh add'
+  alias bww-items='~/.local/bin/bw-workspace.sh items'
+  alias bww-current='~/.local/bin/bw-workspace.sh current'
+  
+  # Quick shortcuts (these require sourcing bw-helpers.sh first)
+  alias bwl='bw_list'           # List all items
+  alias bwu='bw_unlock'         # Unlock vault
+  alias bwg='bw_get'            # Get password
+  alias bwuser='bw_user'        # Get username
+  alias bwsearch='bw_search'    # Search items
+  alias bwgen='bw_generate'     # Generate password
+  alias bwst='bw_status'        # Show status
+fi

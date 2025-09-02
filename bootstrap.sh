@@ -195,13 +195,13 @@ log_info "Symlinking dotfiles with Stow..."
 # Environment-specific stow modules
 case "$ENVIRONMENT" in
     "development"|"data")
-        STOW_MODULES="zsh tmux git nvim ssh"
+        STOW_MODULES="zsh tmux git nvim ssh bitwarden"
         if [[ "$PLATFORM" == "nixos" || "$PLATFORM" == "linux" ]]; then
             STOW_MODULES="$STOW_MODULES kitty"
         fi
         ;;
     "server")
-        STOW_MODULES="zsh tmux git ssh"
+        STOW_MODULES="zsh tmux git ssh bitwarden"
         ;;
     "minimal")
         STOW_MODULES="zsh git ssh"
