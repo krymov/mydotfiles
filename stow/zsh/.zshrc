@@ -42,22 +42,12 @@ esac
 
 # PATH management (keep it clean and predictable)
 typeset -U path  # Remove duplicates
-
-# Nix-first strategy: prioritize Nix packages over Homebrew
 path=(
   "$HOME/.local/bin"
   "$HOME/bin"
-  "$HOME/.nix-profile/bin"              # Nix user packages (highest priority)
-  "/nix/var/nix/profiles/default/bin"   # Nix system packages
-  "$HOME/.dotfiles"                      # Dotfiles scripts
-  "/opt/homebrew/bin"                    # Homebrew packages (lower priority)
-  "/opt/homebrew/sbin"
-  "/usr/local/bin"                       # Legacy Homebrew location
-  "/usr/bin"                             # System packages
-  "/bin"
-  "/usr/sbin"
-  "/sbin"
-  $path                                  # Any remaining paths
+  "$HOME/.nix-profile/bin"
+  "/nix/var/nix/profiles/default/bin"
+  $path
 )
 export PATH
 

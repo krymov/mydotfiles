@@ -59,56 +59,62 @@
 
             # Text editors for data work
             neovim
-            
+
             # File management
             tree eza
             fzf
-
-            # Python environment (macOS optimized - no CUDA dependencies)
-            (python3.withPackages (ps: with ps; [
-              pandas          # DataFrame operations
-              polars          # Fast DataFrame library
-              numpy           # Numerical computing
-              matplotlib      # Basic plotting
-              jupyter         # Notebook environment
-              ipython         # Enhanced REPL
-              requests        # HTTP library
-              pyarrow         # Parquet support
-            ]))
           ];
 
           shellHook = ''
-            echo "� Data Analysis Environment"
-            echo "=============================="
+            echo "📊 Data Analysis Environment Loaded!"
             echo ""
-            echo "📊 Data Processing Tools:"
-            echo "  • qsv - CSV processing powerhouse"
-            echo "  • xsv - CSV processing toolkit"
-            echo "  • visidata - Interactive data explorer (vd <file>)"
-            echo "  • duckdb - SQL analytics database"
-            echo "  • polars-cli - Fast DataFrame CLI"
-            echo "  • miller - Data processing (like awk/sed for CSV/JSON)"
+            echo "🗂️  CSV/TSV Tools:"
+            echo "  qsv         - Swiss army knife for CSV (fastest, most features)"
+            echo "  tv          - Pretty table viewer (tidy-viewer)"
+            echo "  mlr         - Miller: awk for structured data"
+            echo "  csvkit      - Python suite: csvlook, csvcut, csvjoin, etc."
+            echo "  csvtk       - Go-based CSV toolkit"
+            echo "  vd          - VisiData: interactive data explorer"
+            echo "  daff        - Table-aware diffs"
+            echo "  xan         - Maintained CSV toolkit (xsv successor)"
+            echo ""
+            echo "🔧 JSON/YAML/TOML:"
+            echo "  jq/gojq     - JSON query and transformation"
+            echo "  yq          - YAML/JSON/TOML processor"
+            echo "  dasel       - Universal data selector"
+            echo "  fx          - Interactive JSON viewer"
+            echo "  jo          - Build JSON from command line"
+            echo "  jc          - Convert command output to JSON"
+            echo ""
+            echo "🗄️  SQL & Databases:"
+            echo "  duckdb      - Query CSV/Parquet with SQL"
+            echo "  sqlite3     - SQLite command line"
+            echo "  sqlite-utils - Load CSVs into SQLite quickly"
             echo ""
             echo "📈 Analysis & Visualization:"
-            echo "  • gnuplot - Plotting and graphing"
-            echo "  • python3 - with pandas, polars, numpy, matplotlib, jupyter"
+            echo "  sc-im       - Vim-like spreadsheet"
+            echo "  gnuplot     - Quick plots from data"
+            echo "  hyperfine   - Benchmark data pipelines"
             echo ""
-            echo "� Data Format Tools:"
-            echo "  • jq - JSON processor"
-            echo "  • yq - YAML processor"
-            echo "  • csvkit - CSV utilities (csvstat, csvcut, etc.)"
-            echo "  • sqlite - Database engine"
+            echo "🚀 Text Processing:"
+            echo "  rg/fd       - Fast search and find"
+            echo "  bat/delta   - Better cat and diffs"
+            echo "  sd          - Intuitive sed replacement"
+            echo "  choose      - Quick column selection"
+            echo "  datamash    - Statistical operations"
+            echo "  ag          - Angle-grinder: structured log queries"
             echo ""
-            echo "📁 File & Web Tools:"
-            echo "  • fd, ripgrep - Fast search tools"
-            echo "  • curl, httpie - HTTP clients"
-            echo "  • git - Version control"
+            echo "⚡ Pipeline Tools:"
+            echo "  parallel    - GNU parallel"
+            echo "  pv          - Pipe viewer (show throughput)"
+            echo "  sponge      - Soak up input before writing"
+            echo "  ts          - Timestamp input"
             echo ""
-            echo "💡 Quick Start:"
-            echo "  vd data.csv              # Explore CSV interactively"
-            echo "  qsv stats data.csv       # Quick statistics"
-            echo "  duckdb                   # SQL on files"
-            echo "  python3 -m jupyter notebook  # Start Jupyter"
+            echo "Quick start examples:"
+            echo "  qsv stats data.csv                    # Quick statistics"
+            echo "  tv data.csv                           # Pretty table view"
+            echo "  duckdb -c \"SELECT * FROM 'data.csv'\"  # SQL on CSV"
+            echo "  vd data.csv                           # Interactive exploration"
             echo ""
           '';
         };

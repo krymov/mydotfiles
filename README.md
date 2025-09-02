@@ -1,198 +1,101 @@
-# 🏠 Dotfiles# 🚀 Mark's Dotfiles# Mark's Dotfiles# Dotfiles
+# 🚀 Mark's Dotfiles# Mark's Dotfiles# Dotfiles
 
 
 
-Cross-platform development environment with Nix package management and GNU Stow for dotfile organization.
+> A modern, AI-enhanced development environment that works across macOS and Linux
 
 
 
-## 🚀 Quick Start> A modern, AI-enhanced development environment that works across macOS and Linux
+Transform your development workflow with intelligent tools, seamless configuration management, and AI-powered coding assistance. This dotfiles setup provides everything you need for productive development, from smart shell completions to advanced AI coding agents.A collection of configuration files and utilities for a productive development environment across macOS and Linux systems.A robust, cross-platform dotfiles configuration for macOS (with Nix) and NixOS. This setup provides a consistent development environment across platforms with enhanced shell completions, cloud CLI tools, and modern development workflows.
 
 
-
-```bash
-
-# Clone and bootstrap
-
-git clone https://github.com/krymov/mydotfiles.git ~/.dotfilesTransform your development workflow with intelligent tools, seamless configuration management, and AI-powered coding assistance. This dotfiles setup provides everything you need for productive development, from smart shell completions to advanced AI coding agents.A collection of configuration files and utilities for a productive development environment across macOS and Linux systems.A robust, cross-platform dotfiles configuration for macOS (with Nix) and NixOS. This setup provides a consistent development environment across platforms with enhanced shell completions, cloud CLI tools, and modern development workflows.
-
-cd ~/.dotfiles
-
-./bootstrap.sh
-
-```
 
 ## ✨ What Makes This Special
 
-## 📦 What's Included
 
 
+🤖 **AI-Powered Coding** - Built-in CodeCompanion with 6 specialized AI agents  ## 🚀 Features## 🚀 Enhanced Shell Experience
 
-### Core Tools (Always Available)
+🎯 **Multiple Neovim Configs** - Switch between AstroNvim, LazyVim, and vanilla setups  
 
-- **Shell**: Zsh with enhanced completions and git-aware prompt🤖 **AI-Powered Coding** - Built-in CodeCompanion with 6 specialized AI agents  ## 🚀 Features## 🚀 Enhanced Shell Experience
+⚡ **Smart Shell** - Enhanced Zsh with intelligent completions and fuzzy finding  
 
-- **Editor**: Neovim with AstroNvim configuration
+🛠️ **Development Environments** - Isolated Nix flakes for Go, Python, Node.js, and Rust  
 
-- **File Tools**: ripgrep, fd, fzf, bat, eza, tree🎯 **Multiple Neovim Configs** - Switch between AstroNvim, LazyVim, and vanilla setups  
+🔄 **One-Command Setup** - Automated installation with backup protection  - **Multiple Neovim Configurations**: Easy switching between AstroNvim, LazyVim, and vanilla configs### Smart Completions & Auto-suggestions
 
-- **Git**: git, lazygit, gh (GitHub CLI)
-
-- **Terminal**: tmux with optimized configuration⚡ **Smart Shell** - Enhanced Zsh with intelligent completions and fuzzy finding  
-
-
-
-### Data Processing Tools🛠️ **Development Environments** - Isolated Nix flakes for Go, Python, Node.js, and Rust  
-
-- **CSV/TSV**: qsv, csvkit, csvtk, tidy-viewer, miller
-
-- **JSON/YAML**: jq, yq, dasel, fx🔄 **One-Command Setup** - Automated installation with backup protection  - **Multiple Neovim Configurations**: Easy switching between AstroNvim, LazyVim, and vanilla configs### Smart Completions & Auto-suggestions
-
-- **SQL**: duckdb, sqlite, sqlite-utils
-
-- **Interactive**: visidata (vd)🎨 **Beautiful Terminal** - Modern tools with syntax highlighting and git integration  
-
-- **Python**: Available in data environments
+🎨 **Beautiful Terminal** - Modern tools with syntax highlighting and git integration  
 
 - **Enhanced ZSH Setup**: Custom aliases, functions, and shell improvements with cross-platform compatibility
 
-## 🌍 Multi-Environment Support
-
 ## 🎬 Quick Demo
 
-### Development Environment (Default)
+- **GNU Stow Management**: Organized dotfile management with symlinksYour zsh shell now includes intelligent completions and suggestions:
 
-```bash- **GNU Stow Management**: Organized dotfile management with symlinksYour zsh shell now includes intelligent completions and suggestions:
+```bash
 
-./dev-env.sh development
-
-# or```bash
-
-nix-shell --arg environment '"development"'
-
-```# 1. Clone and setup (takes ~2 minutes)- **Nix Integration**: Flake-based development environments for different languages
-
-Full toolset including data processing, development tools, and Python environment.
+# 1. Clone and setup (takes ~2 minutes)- **Nix Integration**: Flake-based development environments for different languages
 
 git clone https://github.com/krymov/mydotfiles.git ~/.dotfiles
 
-### Server Environment  
+cd ~/.dotfiles && ./setup.sh- **One-Command Setup**: Automated installation and configuration**Auto-completion** (Press `Tab`):
 
-```bashcd ~/.dotfiles && ./setup.sh- **One-Command Setup**: Automated installation and configuration**Auto-completion** (Press `Tab`):
 
-./dev-env.sh server
-
-```
-
-Minimal toolset for production servers - essential tools only.
 
 # 2. Launch Neovim with AI assistance- **Commands**: All installed commands with parameter suggestions
 
-### Data Analysis Environment
+nvim-switch switch astronvim && nvim
 
-```bashnvim-switch switch astronvim && nvim
-
-nix develop ./flakes/data/
-
-```## 📦 Quick Setup- **File paths**: Smart file and directory completion with fuzzy matching
-
-Specialized environment for data work with Jupyter, pandas, and analysis tools.
+## 📦 Quick Setup- **File paths**: Smart file and directory completion with fuzzy matching
 
 # 3. Start coding with AI agents
 
-## 📁 Structure
-
 # Select code → <leader>ar (refactor)- **Git**: Branch names, tags, remotes, and git command options
+
+# Select code → <leader>at (generate tests)
+
+# Select code → <leader>av (code review)1. **Clone this repository:**- **Cloud CLIs**: Complete kubectl, gcloud, aws, docker commands
 
 ```
 
-~/.dotfiles/# Select code → <leader>at (generate tests)
+   ```bash- **Custom aliases**: All your custom aliases work with tab completion
 
-├── stow/           # Dotfile configurations (managed by GNU Stow)
+## 📦 What You Get
 
-│   ├── zsh/        # Zsh configuration# Select code → <leader>av (code review)1. **Clone this repository:**- **Cloud CLIs**: Complete kubectl, gcloud, aws, docker commands
+   git clone https://github.com/krymov/mydotfiles.git ~/.dotfiles
 
-│   ├── tmux/       # Tmux configuration  
+### 🤖 AI Coding Agents
 
-│   ├── git/        # Git configuration```
-
-│   ├── nvim/       # Neovim configuration
-
-│   └── ssh/        # SSH configuration   ```bash- **Custom aliases**: All your custom aliases work with tab completion
-
-├── flakes/         # Nix flake environments
-
-│   └── data/       # Data analysis environment## 📦 What You Get
-
-├── scripts/        # Utility scripts
-
-├── guides/         # Documentation   git clone https://github.com/krymov/mydotfiles.git ~/.dotfiles
-
-└── bootstrap.sh    # Setup script
-
-```### 🤖 AI Coding Agents
+Six specialized AI assistants for different coding tasks:   cd ~/.dotfiles**Auto-suggestions** (Fuzzy gray text):
 
 
 
-## 🔧 Key FeaturesSix specialized AI assistants for different coding tasks:   cd ~/.dotfiles**Auto-suggestions** (Fuzzy gray text):
+| Agent | Keybinding | Purpose |   ```- **History-based**: Suggests commands from your history as you type
 
+|-------|------------|---------|
 
+| **Refactor** | `<leader>ar` | Improve code structure while preserving behavior |- **Smart completion**: Context-aware suggestions
 
-- **Cross-platform**: Works on macOS and Linux
+| **TestGen** | `<leader>at` | Generate comprehensive unit tests |
 
-- **Nix-first**: Package management with Nix, selective Homebrew usage
+| **Reviewer** | `<leader>av` | Thorough code review and security analysis |2. **Run the setup script:**- **Accept with**: `→` (right arrow) or `Ctrl+F`
 
-- **Environment isolation**: Different tool sets for different contexts| Agent | Keybinding | Purpose |   ```- **History-based**: Suggests commands from your history as you type
+| **Docs** | `<leader>ad` | Generate documentation and comments |
 
-- **Fast switching**: Quick environment changes with convenience scripts
+| **Debug** | `<leader>aD` | Systematic debugging assistance |   ```bash
 
-- **Rich completions**: Enhanced zsh completions for all tools|-------|------------|---------|
+| **Architect** | `<leader>aP` | High-level design and architecture review |
 
-
-
-## 🛠️ Management Commands| **Refactor** | `<leader>ar` | Improve code structure while preserving behavior |- **Smart completion**: Context-aware suggestions
-
-
-
-```bash| **TestGen** | `<leader>at` | Generate comprehensive unit tests |
-
-./bootstrap.sh      # Initial setup
-
-./update.sh         # Update packages and dotfiles  | **Reviewer** | `<leader>av` | Thorough code review and security analysis |2. **Run the setup script:**- **Accept with**: `→` (right arrow) or `Ctrl+F`
-
-./dev-env.sh ENV    # Switch environments
-
-```| **Docs** | `<leader>ad` | Generate documentation and comments |
-
-
-
-## 📚 Documentation| **Debug** | `<leader>aD` | Systematic debugging assistance |   ```bash
-
-
-
-- [Setup Guide](guides/setup-guide.md) - Detailed installation instructions| **Architect** | `<leader>aP` | High-level design and architecture review |
-
-- [Daily Workflow](guides/daily-workflow.md) - Common usage patterns
-
-- [Neovim Guide](guides/neovim-guide.md) - Editor configuration   ./setup.sh**History Search**:
-
-- [Troubleshooting](guides/troubleshooting.md) - Common issues and fixes
+   ./setup.sh**History Search**:
 
 ### 🎯 Neovim Configurations
 
-## 🎯 Philosophy
-
 Switch between different setups based on your needs:   ```- **Fuzzy search**: `Ctrl+R` for interactive fuzzy history search
 
-1. **Reproducible**: Same environment across machines
 
-2. **Minimal**: Only install what you need when you need it
 
-3. **Fast**: Quick environment switching and tool access
+```bash- **Substring search**: `↑/↓` arrows for smart history navigation
 
-4. **Portable**: Works across different platforms and contexts```bash- **Substring search**: `↑/↓` arrows for smart history navigation
-
-5. **Maintainable**: Clear structure and documentation
 nvim-switch switch astronvim    # Full IDE with AI (recommended)
 
 nvim-switch switch lazyvim      # Fast, modern configuration  3. **Restart your shell or reload configuration:**- **Pattern matching**: Search with partial commands or arguments

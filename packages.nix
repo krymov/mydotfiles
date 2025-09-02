@@ -42,63 +42,44 @@ let
 
   # Data analysis and processing tools (for development environments)
   dataPackages = with pkgs; [
-    # Core EDA engines
-    duckdb           # SQL on CSV/Parquet/JSON; fast columnar queries
-    sqlite           # lightweight DB for ad-hoc loading/indexing  
-    sqlite-utils     # load/query CSVs into SQLite quickly
-
-    # CSV/TSV core tools
-    qsv              # fast CSV swiss-army knife (schema, validate, join, sample)
-    tidy-viewer      # pretty table viewer (command: tv)
-    miller           # mlr: awk for CSV/TSV, reshaping, group-stats
+    # CSV/TSV core
+    qsv              # fast CSV swiss-army knife (Rust)
+    tidy-viewer      # pretty viewer (command: tv)
+    miller           # mlr: awk for CSV/TSV
     csvkit           # csvlook/csvcut/csvjoin, etc. (Python)
-    csvtk            # fast CSV/TSV toolkit (Go) - cut, grep, uniq, join
+    csvtk            # fast CSV/TSV toolkit (Go)
     visidata         # interactive TUI data wrangler
     python3Packages.daff  # CSV/TSV diffs (table-aware)
-    xan              # maintained xsv alternative
-
-    # Data quality & profiling
-    python3Packages.frictionless  # schema + validation for tabular data
 
     # JSON/YAML/TOML (extended)
     gojq             # JSON processors (gojq is faster/stricter)
     dasel            # jq-like for JSON/YAML/TOML/XML
     fx               # interactive JSON viewer
     jo               # build JSON from shell
-    jc               # turn many command outputs into JSON
 
-    # Text processing & pipelines
+    # SQL-on-files / light DBs
+    duckdb           # query CSV/Parquet with SQL
+    sqlite           # sqlite3 CLI
+    sqlite-utils     # load/query CSVs into SQLite quickly
+
+    # Logs & text pipelines
     angle-grinder    # agrind: structured log queries
     delta            # better diffs for text
     sd               # intuitive sed replacement
     choose           # quick column selector
-    datamash         # quick reductions and statistical operations
+    datamash         # one-liner aggregations
     moreutils        # sponge, ts, vidir, etc.
-    parallel         # GNU parallel for concurrent processing
+    parallel
     pv               # show pipe throughput
     hyperfine        # benchmark pipelines
 
-    # Visualization & analysis
+    # Spreadsheet/TUI & quick plots
     sc-im            # vim-like terminal spreadsheet
-    gnuplot          # quick plots from CSV/data files
+    gnuplot          # quick plots from CSV
 
-    # Reproducibility & versioning
-    dvc              # dataset & experiment tracking with remotes
-
-    # Python environment with core ML/EDA packages (macOS optimized)
-    (python3.withPackages (ps: with ps; [
-      pandas           # DataFrame operations
-      polars           # Fast DataFrame library (Rust-based) 
-      numpy            # Numerical computing
-      matplotlib       # Plotting
-      seaborn          # Statistical visualization
-      jupyter          # Notebook environment
-      ipython          # Enhanced REPL
-      requests         # HTTP library
-      pyarrow          # Parquet support
-      # Note: Excluding scipy, plotly temporarily to avoid CUDA warnings on macOS
-      # You can install these separately if needed: pip install scipy plotly
-    ]))
+    # Optional/Legacy
+    xan              # maintained xsv alternative
+    jc               # turn many command outputs into JSON
   ];
 
   # Platform-specific packages
@@ -150,6 +131,33 @@ let
     # sqlite
   ];
 
+  # Crypto development packages
+  cryptoPackages = with pkgs; [
+    # Core tools
+    nodejs
+    yarn
+    docker
+    websocat
+    grpcurl
+    openssl
+
+    # EVM (Polygon, ETH)
+    foundry-bin
+    go-ethereum
+    nodePackages.hardhat
+    nodePackages.truffle
+
+    # Bitcoin-style key derivation (for HD wallets)
+    libbitcoin-explorer
+    python3Packages.mnemonic
+    python3Packages.hdwallet
+
+    # Secrets / Hardware
+    age
+    gnupg
+    yubikey-manager
+  ];
+
   # Environment-specific package selection
   environmentPackages =
     if environment == "server" then
@@ -157,7 +165,7 @@ let
     else if environment == "minimal" then
       corePackages ++ platformPackages
     else # development (default)
-      corePackages ++ dataPackages ++ platformPackages ++ devPackages;
+      corePackages ++ dataPackages ++ platformPackages ++ devPackages ++ cryptoPackages;
 
 in
   environmentPackages
