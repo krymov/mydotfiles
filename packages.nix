@@ -26,6 +26,7 @@ let
     lazygit
     gh
     direnv
+    cachix
 
     # System utilities
     curl
