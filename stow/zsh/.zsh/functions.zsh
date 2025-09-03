@@ -292,3 +292,95 @@ esac
 
 # Load machine-specific functions if they exist
 [[ -r "$HOME/.zsh/functions.local.zsh" ]] && source "$HOME/.zsh/functions.local.zsh"
+
+# Python environment management
+py-env() {
+    local env_type="${1:-status}"
+    
+    case "$env_type" in
+        "minimal"|"min")
+            echo "🐍 Switching to Python minimal environment"
+            export PYTHON_ENV=minimal
+            dr  # direnv reload
+            ;;
+        "full")
+            echo "🐍 Switching to Python full environment"
+            export PYTHON_ENV=full
+            dr  # direnv reload
+            ;;
+        "status"|*)
+            echo "🐍 Python Environment Status:"
+            echo "Current: ${PYTHON_ENV:-minimal}"
+            echo ""
+            echo "Usage: py-env [minimal|full]"
+            echo "  minimal - uv + ruff only"
+            echo "  full    - uv + ruff + mypy + pytest + ipython + libraries"
+            ;;
+    esac
+}
+
+# Modern Python project helpers
+py-new() {
+    local project_name="$1"
+    local env_type="${2:-minimal}"
+    
+    if [[ -z "$project_name" ]]; then
+        echo "Usage: py-new <project-name> [minimal|full]"
+        echo "  minimal - Basic uv + ruff setup (default)"
+        echo "  full    - Full development environment"
+        return 1
+    fi
+    
+    if [[ "$env_type" == "full" ]]; then
+        PYTHON_ENV=full project-init python "$project_name"
+    else
+        project-init python "$project_name"
+    fi
+}
+
+# Quick uv project setup in current directory
+py-here() {
+    local env_type="${1:-minimal}"
+    
+    if [[ -f "pyproject.toml" ]]; then
+        echo "⚠️  pyproject.toml already exists"
+        return 1
+    fi
+    
+    echo "🐍 Setting up Python project in current directory"
+    
+    if [[ "$env_type" == "full" ]]; then
+        export PYTHON_ENV=full
+        echo 'export PYTHON_ENV=full' > .env
+    fi
+    
+    # Create .envrc
+    cat > .envrc << 'EOF'
+use flake ~/.dotfiles/flakes/python
+dotenv_if_exists
+PATH_add bin
+PATH_add scripts
+
+if [[ "${PYTHON_ENV:-minimal}" == "full" ]]; then
+  echo "Using Python full environment"
+else  
+  echo "Using Python minimal environment"
+fi
+
+alias uv-add="uv add"
+alias uv-run="uv run"
+alias lint="ruff check ."
+alias format="ruff format ."
+alias check="ruff check . && ruff format --check ."
+EOF
+    
+    # Initialize uv project
+    uv init --no-readme
+    direnv allow
+    
+    echo "✅ Python environment ready!"
+    echo "🚀 Next steps:"
+    echo "  uv add requests            # Add dependencies"
+    echo "  uv run python main.py      # Run code"
+    echo "  ruff check . && ruff format .  # Lint and format"
+}

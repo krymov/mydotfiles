@@ -43,6 +43,7 @@ esac
 # PATH management (keep it clean and predictable)
 typeset -U path  # Remove duplicates
 path=(
+  "$HOME/.dotfiles/bin"
   "$HOME/.local/bin"
   "$HOME/bin"
   "$HOME/.nix-profile/bin"

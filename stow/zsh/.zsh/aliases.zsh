@@ -250,3 +250,49 @@ if [[ -d "/Applications/Visual Studio Code - Insiders.app" ]]; then
   alias code-insiders='"/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin/code"'
   alias code='code-insiders'  # Use insiders as default code command
 fi
+
+# Project management aliases
+alias pinit='project-init'
+alias pgo='project-init go'
+alias ppy='project-init python'  
+alias ppy-full='PYTHON_ENV=full project-init python'  # Python with full environment
+alias pjs='project-init nodejs'
+alias prs='project-init rust'
+alias pdata='project-init data'
+alias pfull='project-init fullstack'
+
+# Cachix aliases
+alias csetup='cachix-setup'
+alias cpush='cachix-push-env'
+alias cwatch='cachix-watch'
+alias cuse='cachix use'
+alias cauth='cachix-auth'
+alias cstatus='cachix-status'
+
+# direnv aliases
+alias da='direnv allow'
+alias dr='direnv reload'
+alias ds='direnv status'
+
+# Nix development aliases
+alias ndev='nix develop'
+alias ndev-full='nix develop .#full'  # For full Python environment
+alias nflake='nix flake'
+alias ncheck='nix flake check'
+alias nupdate='nix flake update'
+alias nbuild='nix build'
+alias nrun='nix run'
+alias nshell='nix shell'
+
+# Modern Python workflow aliases
+alias uv-init='uv init'
+alias uv-add='uv add'
+alias uv-run='uv run'
+alias uv-sync='uv sync'
+alias lint='ruff check .'
+alias format='ruff format .'
+alias check='ruff check . && ruff format --check .'
+
+# Python environment shortcuts
+alias py-min='py-env minimal'
+alias py-full='py-env full'

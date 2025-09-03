@@ -1,54 +1,57 @@
-# 🚀 Mark's Dotfiles# Mark's Dotfiles# Dotfiles
-
-
+# 🚀 Mark's Dotfiles
 
 > A modern, AI-enhanced development environment that works across macOS and Linux
 
-
-
-Transform your development workflow with intelligent tools, seamless configuration management, and AI-powered coding assistance. This dotfiles setup provides everything you need for productive development, from smart shell completions to advanced AI coding agents.A collection of configuration files and utilities for a productive development environment across macOS and Linux systems.A robust, cross-platform dotfiles configuration for macOS (with Nix) and NixOS. This setup provides a consistent development environment across platforms with enhanced shell completions, cloud CLI tools, and modern development workflows.
-
-
+Transform your development workflow with intelligent tools, seamless configuration management, and AI-powered coding assistance. This dotfiles setup provides everything you need for productive development, from smart shell completions to advanced AI coding agents.
 
 ## ✨ What Makes This Special
 
-
-
-🤖 **AI-Powered Coding** - Built-in CodeCompanion with 6 specialized AI agents  ## 🚀 Features## 🚀 Enhanced Shell Experience
-
+🤖 **AI-Powered Coding** - Built-in CodeCompanion with 6 specialized AI agents  
 🎯 **Multiple Neovim Configs** - Switch between AstroNvim, LazyVim, and vanilla setups  
-
 ⚡ **Smart Shell** - Enhanced Zsh with intelligent completions and fuzzy finding  
-
-🛠️ **Development Environments** - Isolated Nix flakes for Go, Python, Node.js, and Rust  
-
-🔄 **One-Command Setup** - Automated installation with backup protection  - **Multiple Neovim Configurations**: Easy switching between AstroNvim, LazyVim, and vanilla configs### Smart Completions & Auto-suggestions
-
+🛠️ **Development Environments** - Isolated Nix flakes for Go, Python, Node.js, Rust, and data analysis  
+�️ **Cachix Integration** - Binary caching for faster builds and team collaboration  
+📦 **Project Templates** - One-command project initialization with flakes and direnv  
+🔄 **One-Command Setup** - Automated installation with backup protection  
 🎨 **Beautiful Terminal** - Modern tools with syntax highlighting and git integration  
-
-- **Enhanced ZSH Setup**: Custom aliases, functions, and shell improvements with cross-platform compatibility
 
 ## 🎬 Quick Demo
 
-- **GNU Stow Management**: Organized dotfile management with symlinksYour zsh shell now includes intelligent completions and suggestions:
+```bash
+# 1. Clone and setup (takes ~2 minutes)
+git clone https://github.com/krymov/mydotfiles.git ~/.dotfiles
+cd ~/.dotfiles && ./setup.sh
+
+# 2. Create a new project with isolated environment
+pinit python my-ml-project
+cd my-ml-project  # Environment loads automatically!
+
+# 3. Launch Neovim with AI assistance
+nvim-switch switch astronvim && nvim
+```
+
+## 🛠️ Per-Project Development Environments
+
+This setup provides powerful project isolation using Nix flakes and direnv:
 
 ```bash
+# Quick project creation
+pinit python my-ml-app      # Python with ML tools
+pinit go my-api-server      # Go with dev tools  
+pinit nodejs my-web-app     # Node.js with modern stack
+pinit rust my-cli-tool      # Rust with cargo tools
+pinit data my-analysis      # Data analysis environment
+pinit fullstack my-saas     # Full-stack project
 
-# 1. Clone and setup (takes ~2 minutes)- **Nix Integration**: Flake-based development environments for different languages
+# Cachix integration for fast builds
+csetup my-project-cache     # Setup binary cache
+cpush my-project-cache      # Push environment to cache
+cwatch my-project-cache     # Auto-push builds
+```
 
-git clone https://github.com/krymov/mydotfiles.git ~/.dotfiles
+📖 **[Complete Project Guide](guides/project-flakes-guide.md)** - Step-by-step instructions for organizing per-project flakes
 
-cd ~/.dotfiles && ./setup.sh- **One-Command Setup**: Automated installation and configuration**Auto-completion** (Press `Tab`):
-
-
-
-# 2. Launch Neovim with AI assistance- **Commands**: All installed commands with parameter suggestions
-
-nvim-switch switch astronvim && nvim
-
-## 📦 Quick Setup- **File paths**: Smart file and directory completion with fuzzy matching
-
-# 3. Start coding with AI agents
+## 📦 Quick Setup
 
 # Select code → <leader>ar (refactor)- **Git**: Branch names, tags, remotes, and git command options
 
