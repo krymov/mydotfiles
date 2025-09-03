@@ -66,8 +66,12 @@ show_help() {
 update_packages() {
     log_info "Updating Nix packages..."
 
-    # Update Nix packages
+    # Install/update packages from packages.nix
     if command -v nix-env >/dev/null; then
+        # Install packages from packages.nix
+        ./install-packages.sh development
+
+        # Update existing packages
         nix-env -u || log_warning "Some packages failed to update"
         log_success "Nix packages updated"
     else

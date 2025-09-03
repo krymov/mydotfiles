@@ -136,6 +136,8 @@ let
     # awscli2
     # google-cloud-sdk
     # terraform
+    dotnet-sdk_8
+    doctl
 
     # Database tools
     # postgresql
@@ -160,7 +162,7 @@ let
     # nodePackages.truffle  # Comment out if not available
 
     # Bitcoin-style key derivation (for HD wallets)
-    libbitcoin-explorer
+    # libbitcoin-explorer  # Removed - obsolete version of Boost, no maintainer
     # python3Packages.mnemonic  # Comment out if not available
     # python3Packages.hdwallet  # Comment out if not available
 

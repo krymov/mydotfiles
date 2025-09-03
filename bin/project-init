@@ -38,7 +38,7 @@ show_help() {
 
 create_fast_envrc() {
     local project_type="$1"
-    
+
     case "$project_type" in
         python|data)
             cat > .envrc << 'EOF'
@@ -152,7 +152,7 @@ echo ""
 export PROJECT_ROOT="$(pwd)"
 export NODE_ENV=development
 
-# Add local node_modules/.bin to PATH  
+# Add local node_modules/.bin to PATH
 export PATH="$PROJECT_ROOT/node_modules/.bin:$PATH"
 EOF
             ;;
@@ -196,7 +196,7 @@ EOF
 copy_flake_template() {
     local project_type="$1"
     local dotfiles_dir="$HOME/.dotfiles"
-    
+
     if [[ -f "$dotfiles_dir/flakes/$project_type/flake.nix" ]]; then
         echo "📋 Copying flake template for $project_type"
         cp "$dotfiles_dir/flakes/$project_type/flake.nix" .
@@ -230,7 +230,7 @@ EOF
 
 create_gitignore() {
     local project_type="$1"
-    
+
     # Common ignores
     cat > .gitignore << 'EOF'
 # IDE
