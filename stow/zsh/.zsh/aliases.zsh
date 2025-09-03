@@ -254,7 +254,7 @@ fi
 # Project management aliases
 alias pinit='project-init'
 alias pgo='project-init go'
-alias ppy='project-init python'  
+alias ppy='project-init python'
 alias ppy-full='PYTHON_ENV=full project-init python'  # Python with full environment
 alias pjs='project-init nodejs'
 alias prs='project-init rust'

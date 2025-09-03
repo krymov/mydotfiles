@@ -6,14 +6,14 @@ Transform your development workflow with intelligent tools, seamless configurati
 
 ## ✨ What Makes This Special
 
-🤖 **AI-Powered Coding** - Built-in CodeCompanion with 6 specialized AI agents  
-🎯 **Multiple Neovim Configs** - Switch between AstroNvim, LazyVim, and vanilla setups  
-⚡ **Smart Shell** - Enhanced Zsh with intelligent completions and fuzzy finding  
-🛠️ **Development Environments** - Isolated Nix flakes for Go, Python, Node.js, Rust, and data analysis  
-�️ **Cachix Integration** - Binary caching for faster builds and team collaboration  
-📦 **Project Templates** - One-command project initialization with flakes and direnv  
-🔄 **One-Command Setup** - Automated installation with backup protection  
-🎨 **Beautiful Terminal** - Modern tools with syntax highlighting and git integration  
+🤖 **AI-Powered Coding** - Built-in CodeCompanion with 6 specialized AI agents
+🎯 **Multiple Neovim Configs** - Switch between AstroNvim, LazyVim, and vanilla setups
+⚡ **Smart Shell** - Enhanced Zsh with intelligent completions and fuzzy finding
+🛠️ **Development Environments** - Isolated Nix flakes for Go, Python, Node.js, Rust, and data analysis
+�️ **Cachix Integration** - Binary caching for faster builds and team collaboration
+📦 **Project Templates** - One-command project initialization with flakes and direnv
+🔄 **One-Command Setup** - Automated installation with backup protection
+🎨 **Beautiful Terminal** - Modern tools with syntax highlighting and git integration
 
 ## 🎬 Quick Demo
 
@@ -37,7 +37,7 @@ This setup provides powerful project isolation using Nix flakes and direnv:
 ```bash
 # Quick project creation
 pinit python my-ml-app      # Python with ML tools
-pinit go my-api-server      # Go with dev tools  
+pinit go my-api-server      # Go with dev tools
 pinit nodejs my-web-app     # Node.js with modern stack
 pinit rust my-cli-tool      # Rust with cargo tools
 pinit data my-analysis      # Data analysis environment
@@ -643,15 +643,15 @@ Feel free to:   mkdir -p ~/.dotfiles/stow/newapp/.config/newapp
 
 ### Compared to Other Dotfiles:   ```
 
-✅ **AI Integration** - Built-in coding assistance  
+✅ **AI Integration** - Built-in coding assistance
 
 ✅ **Multiple Neovim Configs** - Switch based on your needs  4. Stow the package:
 
-✅ **Comprehensive Guides** - Actually usable documentation  
+✅ **Comprehensive Guides** - Actually usable documentation
 
 ✅ **Secure AI Keys** - Proper secret management     ```bash2. Add your `init.lua` and configuration files
 
-✅ **Modern Tools** - Latest CLI enhancements  
+✅ **Modern Tools** - Latest CLI enhancements
 
 ✅ **Cross-Platform** - Works on macOS and Linux     cd ~/.dotfiles && stow -t ~ stow/newapp
 

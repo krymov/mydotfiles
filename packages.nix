@@ -38,7 +38,7 @@ let
 
     # Basic data tools (lightweight, useful everywhere)
     jq
-    yq
+    yq-go            # Use yq-go instead of python yq to avoid conflicts
   ];
 
   # Data analysis and processing tools (for development environments)
@@ -69,7 +69,7 @@ let
     sd               # intuitive sed replacement
     choose           # quick column selector
     datamash         # one-liner aggregations
-    moreutils        # sponge, ts, vidir, etc.
+    # moreutils      # sponge, ts, vidir, etc. (conflicts with parallel)
     parallel
     pv               # show pipe throughput
     hyperfine        # benchmark pipelines
@@ -94,15 +94,26 @@ let
     # macOS-specific packages (can be empty if using Homebrew)
   ]);
 
-  # Optional development packages (uncomment as needed)
+  # Optional development packages (core tools for fast project startup)
   devPackages = with pkgs; [
-    # Python development
-    # python3
-    # python3Packages.pip
-    # python3Packages.virtualenv
+    # Python development (core tools always available)
+    python312
+    uv              # Fast Python package manager
+    ruff            # Fast Python linter and formatter
 
-    # Node.js development
-    # nodejs
+    # Node.js development (modern stack)
+    nodejs_22       # Latest LTS Node.js
+    pnpm            # Fast, disk-efficient package manager
+    # bun             # Ultra-fast JavaScript runtime (uncomment if needed)
+
+    # Go development
+    go              # Go compiler and tools
+    golangci-lint   # Go linter
+
+    # JavaScript tooling (for React/frontend)
+    nodePackages.typescript
+    nodePackages.eslint
+    nodePackages.prettier
     # nodePackages.npm
     # nodePackages.yarn
 
@@ -143,15 +154,15 @@ let
     openssl
 
     # EVM (Polygon, ETH)
-    foundry-bin
+    # foundry-bin  # Comment out if not available in current nixpkgs
     go-ethereum
-    nodePackages.hardhat
-    nodePackages.truffle
+    # nodePackages.hardhat  # Comment out if not available
+    # nodePackages.truffle  # Comment out if not available
 
     # Bitcoin-style key derivation (for HD wallets)
     libbitcoin-explorer
-    python3Packages.mnemonic
-    python3Packages.hdwallet
+    # python3Packages.mnemonic  # Comment out if not available
+    # python3Packages.hdwallet  # Comment out if not available
 
     # Secrets / Hardware
     age

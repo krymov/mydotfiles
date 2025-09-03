@@ -20,6 +20,7 @@ show_help() {
     echo "  python    - Python project with virtual env"
     echo "  go        - Go project with modules"
     echo "  nodejs    - Node.js project with npm/yarn"
+    echo "  react     - React project with Vite & TypeScript"
     echo "  rust      - Rust project with cargo"
     echo "  fullstack - Full-stack project (Go + React)"
     echo "  data      - Data analysis project"
@@ -28,6 +29,8 @@ show_help() {
     echo "  project-init python my-ml-app"
     echo "  project-init go my-api-server"
     echo "  project-init nodejs my-web-app"
+    echo "  project-init react my-frontend"
+    echo "  project-init data my-analysis"
     echo ""
 }
 
@@ -35,21 +38,21 @@ init_project() {
     local project_type="$1"
     local project_name="$2"
     local dotfiles_dir="$HOME/.dotfiles"
-    
+
     echo -e "${BLUE}🚀 Initializing $project_type project: $project_name${NC}"
-    
+
     # Create project directory
     mkdir -p "$project_name"
     cd "$project_name"
-    
+
     # Initialize git
     git init
-    
+
     # Copy flake template or create basic one
     if [[ -f "$dotfiles_dir/flakes/$project_type/flake.nix" ]]; then
         cp "$dotfiles_dir/flakes/$project_type/flake.nix" .
         [[ -f "$dotfiles_dir/flakes/$project_type/.envrc" ]] && cp "$dotfiles_dir/flakes/$project_type/.envrc" .
-        
+
         # Customize flake description
         sed -i.bak "s/description = \".*\"/description = \"$project_name\"/" flake.nix
         rm -f flake.nix.bak
@@ -57,10 +60,10 @@ init_project() {
         _create_flake_template "$project_type" "$project_name"
         _create_envrc_template "$project_type"
     fi
-    
+
     # Create basic .gitignore
     _create_gitignore "$project_type"
-    
+
     # Add language-specific files
     case "$project_type" in
         python)
@@ -72,6 +75,9 @@ init_project() {
         nodejs)
             _setup_nodejs_project "$project_name"
             ;;
+        react)
+            _setup_react_project "$project_name"
+            ;;
         rust)
             _setup_rust_project "$project_name"
             ;;
@@ -82,10 +88,10 @@ init_project() {
             _setup_fullstack_project "$project_name"
             ;;
     esac
-    
+
     # Enable direnv
     direnv allow
-    
+
     echo -e "${GREEN}✅ Project $project_name initialized successfully!${NC}"
     echo ""
     echo "📁 Project structure created"
@@ -102,7 +108,7 @@ init_project() {
 _create_flake_template() {
     local project_type="$1"
     local project_name="$2"
-    
+
     case "$project_type" in
         python)
             cat > flake.nix << EOF
@@ -138,7 +144,7 @@ _create_flake_template() {
               python311
               uv              # Fast Python package manager
               ruff            # Fast Python linter and formatter
-              
+
               # Development utilities
               git
               curl
@@ -159,33 +165,33 @@ _create_flake_template() {
               echo "  ruff check . && ruff format .  # Lint and format"
               echo ""
               echo "💡 For full environment: nix develop .#full"
-              
+
               export PROJECT_ROOT=\$(pwd)
               export UV_CACHE_DIR="\$PWD/.uv-cache"
               mkdir -p .uv-cache
             '';
           };
-          
-          # Full environment with additional tools  
+
+          # Full environment with additional tools
           full = pkgs.mkShell {
             buildInputs = with pkgs; [
               # Modern Python tooling
               python311
               uv
               ruff
-              
+
               # Additional development tools
               python311Packages.python-lsp-server
               python311Packages.mypy
               python311Packages.pytest
               python311Packages.ipython
-              
+
               # Popular libraries
               python311Packages.requests
               python311Packages.click
               python311Packages.rich
               python311Packages.typer
-              
+
               # Development utilities
               git
               curl
@@ -215,7 +221,7 @@ _create_flake_template() {
               echo "  ruff check . && ruff format .  # Lint and format"
               echo "  mypy . && pytest          # Type check and test"
               echo ""
-              
+
               export PROJECT_ROOT=\$(pwd)
               export UV_CACHE_DIR="\$PWD/.uv-cache"
               mkdir -p .uv-cache
@@ -249,7 +255,7 @@ EOF
             gotools
             golangci-lint
             air # Live reload
-            
+
             # Development tools
             git
             curl
@@ -268,7 +274,7 @@ EOF
             echo "  go run cmd/main.go"
             echo "  air  # for live reload"
             echo ""
-            
+
             export PROJECT_ROOT=\$(pwd)
             export GOPATH="\$PROJECT_ROOT/.go"
             export PATH="\$GOPATH/bin:\$PATH"
@@ -301,7 +307,7 @@ EOF
             nodePackages.npm
             nodePackages.yarn
             nodePackages.pnpm
-            
+
             # Development tools
             git
             curl
@@ -321,7 +327,7 @@ EOF
             echo "  npm install"
             echo "  npm run dev"
             echo ""
-            
+
             export PROJECT_ROOT=\$(pwd)
           '';
         };
@@ -353,7 +359,7 @@ EOF
             rustfmt
             clippy
             cargo-watch
-            
+
             # Development tools
             git
             curl
@@ -373,7 +379,7 @@ EOF
             echo "  cargo run"
             echo "  cargo watch -x run  # for live reload"
             echo ""
-            
+
             export PROJECT_ROOT=\$(pwd)
           '';
         };
@@ -408,7 +414,7 @@ EOF
             python311Packages.matplotlib
             python311Packages.seaborn
             python311Packages.scikit-learn
-            
+
             # Data tools
             duckdb
             sqlite
@@ -416,7 +422,7 @@ EOF
             visidata
             miller
             jq
-            
+
             # Development tools
             git
             curl
@@ -436,15 +442,15 @@ EOF
             echo "  python notebooks/explore.py"
             echo "  vd data/sample.csv  # Open with visidata"
             echo ""
-            
+
             export PROJECT_ROOT=\$(pwd)
-            
+
             # Create virtual environment
             if [[ ! -d .venv ]]; then
               echo "📦 Creating Python virtual environment..."
               python -m venv .venv
             fi
-            
+
             source .venv/bin/activate
           '';
         };
@@ -490,7 +496,7 @@ EOF
 
 _create_envrc_template() {
     local project_type="$1"
-    
+
     cat > .envrc << 'EOF'
 # Load the nix development environment
 use flake
@@ -519,7 +525,7 @@ fi
 
 # Aliases for modern Python workflow
 alias uv-add="uv add"
-alias uv-run="uv run" 
+alias uv-run="uv run"
 alias lint="ruff check ."
 alias format="ruff format ."
 alias check="ruff check . && ruff format --check ."
@@ -545,7 +551,7 @@ EOF
 
 _create_gitignore() {
     local project_type="$1"
-    
+
     cat > .gitignore << EOF
 # Environment
 .env
@@ -662,9 +668,58 @@ EOF
 
 _setup_python_project() {
     local project_name="$1"
-    
+
     mkdir -p src tests
-    
+
+    # Override the flake.nix with a fast .envrc (no builds!)
+    cat > .envrc << 'EOF'
+#!/usr/bin/env bash
+# Fast Python environment using main dotfiles tools - NO NIX BUILDS!
+
+echo "🐍 Loading fast Python environment (no builds!)"
+
+# Check that required tools are available from main dotfiles
+if ! command -v python3 >/dev/null 2>&1; then
+    echo "❌ python3 not found - install in main dotfiles"
+    exit 1
+fi
+
+if ! command -v uv >/dev/null 2>&1; then
+    echo "❌ uv not found - install in main dotfiles"
+    exit 1
+fi
+
+if ! command -v ruff >/dev/null 2>&1; then
+    echo "❌ ruff not found - install in main dotfiles"
+    exit 1
+fi
+
+echo "✅ Python: $(python3 --version)"
+echo "✅ uv: $(uv --version)"
+echo "✅ ruff: $(ruff --version)"
+echo ""
+echo "📦 Lightning fast workflow:"
+echo "  uv sync                    # Install dependencies"
+echo "  uv add requests            # Add dependency"
+echo "  uv run python src/main.py  # Run application"
+echo "  ruff check . && ruff format .  # Lint & format"
+echo ""
+
+# Set up project environment
+export PROJECT_ROOT="$(pwd)"
+export PYTHONPATH="$PROJECT_ROOT/src:$PYTHONPATH"
+export UV_CACHE_DIR="$PROJECT_ROOT/.uv-cache"
+
+# Create cache directory
+mkdir -p .uv-cache
+
+# Optional: activate uv venv if it exists
+if [ -d ".venv" ]; then
+    export VIRTUAL_ENV="$PROJECT_ROOT/.venv"
+    export PATH="$VIRTUAL_ENV/bin:$PATH"
+fi
+EOF
+
     # Create modern Python project structure
     echo "# $project_name" > README.md
     echo "" >> README.md
@@ -687,7 +742,7 @@ _setup_python_project() {
     echo "ruff check ." >> README.md
     echo "ruff format ." >> README.md
     echo "\`\`\`" >> README.md
-    
+
     # Create main.py
     cat > src/main.py << 'EOF'
 """Main application module."""
@@ -738,6 +793,9 @@ dev = [
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
 [tool.ruff]
 line-length = 88
 target-version = "py311"
@@ -745,7 +803,7 @@ target-version = "py311"
 [tool.ruff.lint]
 select = [
     "E",  # pycodestyle errors
-    "W",  # pycodestyle warnings  
+    "W",  # pycodestyle warnings
     "F",  # pyflakes
     "I",  # isort
     "B",  # flake8-bugbear
@@ -778,20 +836,76 @@ EOF
     echo ""
     echo "🚀 Next steps:"
     echo "  uv sync                    # Install dependencies"
-    echo "  uv add requests            # Add runtime dependency"  
+    echo "  uv add requests            # Add runtime dependency"
     echo "  uv add --dev pytest       # Add dev dependency"
     echo "  uv run python src/main.py  # Run the application"
 }
 
 _setup_go_project() {
     local project_name="$1"
-    
-    # Initialize go module in direnv to avoid the build issue
+
+    # Fast Go environment using main dotfiles tools - NO NIX BUILDS!
+    cat > .envrc << 'EOF'
+#!/usr/bin/env bash
+# Fast Go environment using main dotfiles tools - NO NIX BUILDS!
+
+echo "🐹 Loading fast Go environment (no builds!)"
+
+# Check that required tools are available from main dotfiles
+if ! command -v go >/dev/null 2>&1; then
+    echo "❌ go not found - install in main dotfiles"
+    exit 1
+fi
+
+if ! command -v golangci-lint >/dev/null 2>&1; then
+    echo "❌ golangci-lint not found - install in main dotfiles"
+    exit 1
+fi
+
+echo "✅ Go: $(go version)"
+echo "✅ golangci-lint: $(golangci-lint version --format short)"
+echo ""
+echo "📦 Lightning fast workflow:"
+echo "  go mod tidy                # Manage dependencies"
+echo "  go run cmd/main.go         # Run application"
+echo "  go build -o bin/app cmd/main.go  # Build binary"
+echo "  golangci-lint run          # Lint code"
+echo "  go test ./...              # Run tests"
+echo ""
+
+# Set up project environment
+export PROJECT_ROOT="$(pwd)"
+export GO111MODULE=on
+export CGO_ENABLED=1
+
+# Add local bin to PATH
+export PATH="$PROJECT_ROOT/bin:$PATH"
+
+# Create directories
+mkdir -p bin
+EOF
+
+    # Initialize go module in the envrc
     echo "go mod init $project_name" >> .envrc
-    
+
     mkdir -p cmd internal pkg
     echo "# $project_name" > README.md
-    
+    echo "" >> README.md
+    echo "A modern Go project with clean architecture." >> README.md
+    echo "" >> README.md
+    echo "## Quick Start" >> README.md
+    echo "" >> README.md
+    echo "\`\`\`bash" >> README.md
+    echo "# Run the application" >> README.md
+    echo "go run cmd/main.go" >> README.md
+    echo "" >> README.md
+    echo "# Build binary" >> README.md
+    echo "go build -o bin/app cmd/main.go" >> README.md
+    echo "" >> README.md
+    echo "# Run tests" >> README.md
+    echo "go test ./..." >> README.md
+    echo "\`\`\`" >> README.md
+
     cat > cmd/main.go << EOF
 package main
 
@@ -811,42 +925,184 @@ EOF
 
 _setup_nodejs_project() {
     local project_name="$1"
-    
+
+    # Fast Node.js environment using main dotfiles tools - NO NIX BUILDS!
+    cat > .envrc << 'EOF'
+#!/usr/bin/env bash
+# Fast Node.js environment using main dotfiles tools - NO NIX BUILDS!
+
+echo "🟢 Loading fast Node.js environment (no builds!)"
+
+# Check that required tools are available from main dotfiles
+if ! command -v node >/dev/null 2>&1; then
+    echo "❌ node not found - install in main dotfiles"
+    exit 1
+fi
+
+if ! command -v pnpm >/dev/null 2>&1; then
+    echo "❌ pnpm not found - install in main dotfiles"
+    exit 1
+fi
+
+echo "✅ Node.js: $(node --version)"
+echo "✅ pnpm: $(pnpm --version)"
+
+# Check for optional tools
+if command -v typescript >/dev/null 2>&1; then
+    echo "✅ TypeScript: $(tsc --version)"
+fi
+
+if command -v eslint >/dev/null 2>&1; then
+    echo "✅ ESLint: $(eslint --version)"
+fi
+
+if command -v prettier >/dev/null 2>&1; then
+    echo "✅ Prettier: $(prettier --version)"
+fi
+
+echo ""
+echo "📦 Lightning fast workflow:"
+echo "  pnpm install              # Install dependencies"
+echo "  pnpm add react            # Add dependency"
+echo "  pnpm run dev               # Start dev server"
+echo "  pnpm run build            # Build for production"
+echo "  eslint . && prettier --write .  # Lint & format"
+echo ""
+
+# Set up project environment
+export PROJECT_ROOT="$(pwd)"
+export NODE_ENV=development
+
+# Add local node_modules/.bin to PATH
+export PATH="$PROJECT_ROOT/node_modules/.bin:$PATH"
+EOF
+
     mkdir -p src
     echo "# $project_name" > README.md
+    echo "" >> README.md
+    echo "A modern Node.js project with pnpm and fast tooling." >> README.md
+    echo "" >> README.md
+    echo "## Quick Start" >> README.md
+    echo "" >> README.md
+    echo "\`\`\`bash" >> README.md
+    echo "# Install dependencies" >> README.md
+    echo "pnpm install" >> README.md
+    echo "" >> README.md
+    echo "# Start development" >> README.md
+    echo "pnpm run dev" >> README.md
+    echo "" >> README.md
+    echo "# Add React (example)" >> README.md
+    echo "pnpm add react react-dom" >> README.md
+    echo "pnpm add -D @types/react vite" >> README.md
+    echo "\`\`\`" >> README.md
+
     echo "console.log('Hello from $project_name!');" > src/index.js
-    
+
     cat > package.json << EOF
 {
   "name": "$project_name",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",
+  "type": "module",
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "echo 'Add your build script here'",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "format": "prettier --write .",
+    "test": "echo 'Add your test framework here'"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "packageManager": "pnpm@latest"
 }
 EOF
 }
 
 _setup_rust_project() {
     local project_name="$1"
-    
+
     # Initialize cargo project in direnv to avoid conflicts
     echo "cargo init --name $project_name ." >> .envrc
 }
 
 _setup_data_project() {
     local project_name="$1"
-    
+
+    # Fast data science environment using main dotfiles tools - NO NIX BUILDS!
+    cat > .envrc << 'EOF'
+#!/usr/bin/env bash
+# Fast data science environment using main dotfiles tools - NO NIX BUILDS!
+
+echo "🟢 Loading fast data science environment (no builds!)"
+
+# Check that required tools are available from main dotfiles
+if ! command -v python >/dev/null 2>&1; then
+    echo "❌ python not found - install in main dotfiles"
+    exit 1
+fi
+
+if ! command -v uv >/dev/null 2>&1; then
+    echo "❌ uv not found - install in main dotfiles"
+    exit 1
+fi
+
+echo "✅ Python: $(python --version)"
+echo "✅ uv: $(uv --version)"
+
+# Check for optional tools
+if command -v jupyter >/dev/null 2>&1; then
+    echo "✅ Jupyter: $(jupyter --version 2>/dev/null | head -1)"
+fi
+
+if command -v ruff >/dev/null 2>&1; then
+    echo "✅ Ruff: $(ruff --version)"
+fi
+
+echo ""
+echo "📊 Lightning fast data workflow:"
+echo "  uv add pandas numpy matplotlib    # Add data libs"
+echo "  uv add jupyter jupyterlab          # Add Jupyter"
+echo "  uv run jupyter lab                 # Start Jupyter"
+echo "  uv run python scripts/analyze.py  # Run analysis"
+echo "  ruff check . && ruff format .      # Lint & format"
+echo ""
+
+# Set up project environment
+export PROJECT_ROOT="$(pwd)"
+export PYTHONPATH="$PROJECT_ROOT/src:$PYTHONPATH"
+
+# Create virtual environment if it doesn't exist
+if [ ! -d ".venv" ]; then
+    echo "🔧 Creating uv virtual environment..."
+    uv venv
+fi
+
+# Activate the virtual environment
+source .venv/bin/activate
+EOF
+
     mkdir -p data/{raw,processed,external} notebooks scripts src
     echo "# $project_name - Data Analysis Project" > README.md
-    
+    echo "" >> README.md
+    echo "A modern data science project with uv and fast tooling." >> README.md
+    echo "" >> README.md
+    echo "## Quick Start" >> README.md
+    echo "" >> README.md
+    echo "\`\`\`bash" >> README.md
+    echo "# Install data science dependencies" >> README.md
+    echo "uv add pandas numpy matplotlib seaborn" >> README.md
+    echo "uv add jupyter jupyterlab" >> README.md
+    echo "" >> README.md
+    echo "# Start Jupyter Lab" >> README.md
+    echo "uv run jupyter lab" >> README.md
+    echo "" >> README.md
+    echo "# Run analysis scripts" >> README.md
+    echo "uv run python scripts/analyze.py" >> README.md
+    echo "\`\`\`" >> README.md
+
     cat > notebooks/01-explore.ipynb << 'EOF'
 {
  "cells": [
@@ -856,7 +1112,7 @@ _setup_data_project() {
    "source": [
     "# Data Exploration\n",
     "\n",
-    "Initial exploration of the dataset."
+    "Initial exploration of the dataset using modern Python data tools."
    ]
   },
   {
@@ -870,9 +1126,15 @@ _setup_data_project() {
     "import matplotlib.pyplot as plt\n",
     "import seaborn as sns\n",
     "\n",
+    "# Set up plotting\n",
+    "plt.style.use('default')\n",
+    "sns.set_palette('husl')\n",
+    "\n",
     "# Load data\n",
     "# df = pd.read_csv('data/raw/sample.csv')\n",
-    "print('Hello from data exploration!')"
+    "print('🚀 Ready for fast data analysis!')\n",
+    "print(f'pandas: {pd.__version__}')\n",
+    "print(f'numpy: {np.__version__}')"
    ]
   }
  ],
@@ -884,7 +1146,7 @@ _setup_data_project() {
   },
   "language_info": {
    "name": "python",
-   "version": "3.11.0"
+   "version": "3.12.0"
   }
  },
  "nbformat": 4,
@@ -895,46 +1157,448 @@ EOF
     echo "data/raw/" > data/.gitkeep
     echo "# Processed data files" > data/processed/.gitkeep
     echo "# External data sources" > data/external/.gitkeep
-    
-    cat > scripts/process_data.py << 'EOF'
+
+    cat > scripts/analyze.py << 'EOF'
 #!/usr/bin/env python3
 """
-Data processing script
+Data analysis script using modern Python tools
 """
 
 import pandas as pd
+import numpy as np
+from pathlib import Path
 
 def main():
-    print("Processing data...")
-    # Add your data processing logic here
-    
+    print("🔍 Running data analysis...")
+
+    # Example analysis
+    data = {
+        'category': ['A', 'B', 'C', 'A', 'B'],
+        'value': [10, 20, 15, 25, 30]
+    }
+    df = pd.DataFrame(data)
+
+    print("\n📊 Sample data:")
+    print(df)
+
+    print(f"\n📈 Summary stats:")
+    print(df.groupby('category')['value'].agg(['mean', 'sum']))
+
 if __name__ == "__main__":
     main()
 EOF
 
-    chmod +x scripts/process_data.py
+    cat > pyproject.toml << EOF
+[project]
+name = "$project_name"
+version = "0.1.0"
+description = "Data analysis project"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[project.optional-dependencies]
+data = ["pandas", "numpy", "matplotlib", "seaborn"]
+jupyter = ["jupyter", "jupyterlab", "ipykernel"]
+dev = ["ruff", "pytest"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "S"]
+ignore = ["S101"]  # Allow assert statements
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+EOF
+
+    chmod +x scripts/analyze.py
+}
+
+_setup_react_project() {
+    local project_name="$1"
+
+    # Fast React environment using main dotfiles tools - NO NIX BUILDS!
+    cat > .envrc << 'EOF'
+#!/usr/bin/env bash
+# Fast React environment using main dotfiles tools - NO NIX BUILDS!
+
+echo "🟢 Loading fast React environment (no builds!)"
+
+# Check that required tools are available from main dotfiles
+if ! command -v node >/dev/null 2>&1; then
+    echo "❌ node not found - install in main dotfiles"
+    exit 1
+fi
+
+if ! command -v pnpm >/dev/null 2>&1; then
+    echo "❌ pnpm not found - install in main dotfiles"
+    exit 1
+fi
+
+echo "✅ Node.js: $(node --version)"
+echo "✅ pnpm: $(pnpm --version)"
+
+# Check for TypeScript and frontend tools
+if command -v tsc >/dev/null 2>&1; then
+    echo "✅ TypeScript: $(tsc --version)"
+fi
+
+if command -v eslint >/dev/null 2>&1; then
+    echo "✅ ESLint: $(eslint --version)"
+fi
+
+if command -v prettier >/dev/null 2>&1; then
+    echo "✅ Prettier: $(prettier --version)"
+fi
+
+echo ""
+echo "⚛️  Lightning fast React workflow:"
+echo "  pnpm install                 # Install dependencies"
+echo "  pnpm run dev                 # Start dev server"
+echo "  pnpm run build               # Build for production"
+echo "  pnpm run preview             # Preview production build"
+echo "  pnpm run lint                # Lint with ESLint"
+echo "  pnpm run format              # Format with Prettier"
+echo ""
+
+# Set up project environment
+export PROJECT_ROOT="$(pwd)"
+export NODE_ENV=development
+
+# Add local node_modules/.bin to PATH
+export PATH="$PROJECT_ROOT/node_modules/.bin:$PATH"
+EOF
+
+    mkdir -p src/components src/hooks src/utils public
+    echo "# $project_name" > README.md
+    echo "" >> README.md
+    echo "A modern React project with Vite, TypeScript, and fast tooling." >> README.md
+    echo "" >> README.md
+    echo "## Quick Start" >> README.md
+    echo "" >> README.md
+    echo "\`\`\`bash" >> README.md
+    echo "# Install dependencies" >> README.md
+    echo "pnpm install" >> README.md
+    echo "" >> README.md
+    echo "# Start development server" >> README.md
+    echo "pnpm run dev" >> README.md
+    echo "" >> README.md
+    echo "# Build for production" >> README.md
+    echo "pnpm run build" >> README.md
+    echo "\`\`\`" >> README.md
+
+    cat > package.json << EOF
+{
+  "name": "$project_name",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.22",
+    "@typescript-eslint/eslint-plugin": "^7.2.0",
+    "@typescript-eslint/parser": "^7.2.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.6",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.2",
+    "vite": "^5.2.0"
+  },
+  "packageManager": "pnpm@latest"
+}
+EOF
+
+    cat > vite.config.ts << 'EOF'
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 3000,
+    open: true
+  }
+})
+EOF
+
+    cat > tsconfig.json << 'EOF'
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
+EOF
+
+    cat > tsconfig.node.json << 'EOF'
+{
+  "compilerOptions": {
+    "composite": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["vite.config.ts"]
+}
+EOF
+
+    cat > .eslintrc.cjs << 'EOF'
+module.exports = {
+  root: true,
+  env: { browser: true, es2020: true },
+  extends: [
+    'eslint:recommended',
+    '@typescript-eslint/recommended',
+    'eslint:recommended',
+    '@typescript-eslint/recommended',
+  ],
+  ignorePatterns: ['dist', '.eslintrc.cjs'],
+  parser: '@typescript-eslint/parser',
+  plugins: ['react-refresh'],
+  rules: {
+    'react-refresh/only-export-components': [
+      'warn',
+      { allowConstantExport: true },
+    ],
+  },
+}
+EOF
+
+    cat > .prettierrc << 'EOF'
+{
+  "semi": false,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "es5"
+}
+EOF
+
+    cat > public/index.html << 'EOF'
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React + TS</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+EOF
+
+    cat > src/main.tsx << 'EOF'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.tsx'
+import './index.css'
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+)
+EOF
+
+    cat > src/App.tsx << 'EOF'
+import { useState } from 'react'
+import './App.css'
+
+function App() {
+  const [count, setCount] = useState(0)
+
+  return (
+    <>
+      <div>
+        <h1>⚛️ React + Vite + TypeScript</h1>
+        <div className="card">
+          <button onClick={() => setCount((count) => count + 1)}>
+            count is {count}
+          </button>
+          <p>
+            Edit <code>src/App.tsx</code> and save to test HMR
+          </p>
+        </div>
+        <p>
+          🚀 Lightning fast development with modern tooling!
+        </p>
+      </div>
+    </>
+  )
+}
+
+export default App
+EOF
+
+    cat > src/App.css << 'EOF'
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.card {
+  padding: 2em;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  color: #fff;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+button:hover {
+  border-color: #646cff;
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+EOF
+
+    cat > src/index.css << 'EOF'
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  button {
+    background-color: #f9f9f9;
+    color: #213547;
+  }
+}
+EOF
+
+    # Create a sample component
+    cat > src/components/Welcome.tsx << 'EOF'
+interface WelcomeProps {
+  name: string
+}
+
+export default function Welcome({ name }: WelcomeProps) {
+  return (
+    <div>
+      <h2>Welcome, {name}!</h2>
+      <p>This is a sample component to get you started.</p>
+    </div>
+  )
+}
+EOF
+
+    # Create a sample hook
+    cat > src/hooks/useCounter.ts << 'EOF'
+import { useState } from 'react'
+
+export function useCounter(initialValue = 0) {
+  const [count, setCount] = useState(initialValue)
+
+  const increment = () => setCount(c => c + 1)
+  const decrement = () => setCount(c => c - 1)
+  const reset = () => setCount(initialValue)
+
+  return { count, increment, decrement, reset }
+}
+EOF
 }
 
 _setup_fullstack_project() {
     local project_name="$1"
-    
+
     mkdir -p backend frontend shared
     echo "# $project_name - Full Stack Project" > README.md
-    
+
     # Backend (Go)
     cd backend
     _create_flake_template "go" "$project_name-backend"
     _create_envrc_template "go"
     _setup_go_project "$project_name-backend"
     cd ..
-    
+
     # Frontend (Node.js)
     cd frontend
     _create_flake_template "nodejs" "$project_name-frontend"
     _create_envrc_template "nodejs"
     _setup_nodejs_project "$project_name-frontend"
     cd ..
-    
+
     # Root flake for unified development
     cat > flake.nix << EOF
 {
@@ -990,19 +1654,19 @@ main() {
         show_help
         exit 0
     fi
-    
+
     if [[ $# -ne 2 ]]; then
         echo -e "${RED}❌ Invalid arguments${NC}"
         show_help
         exit 1
     fi
-    
+
     local project_type="$1"
     local project_name="$2"
-    
+
     # Validate project type
     case "$project_type" in
-        python|go|nodejs|rust|data|fullstack)
+        python|go|nodejs|react|rust|data|fullstack)
             ;;
         *)
             echo -e "${RED}❌ Unknown project type: $project_type${NC}"
@@ -1010,13 +1674,13 @@ main() {
             exit 1
             ;;
     esac
-    
+
     # Check if directory already exists
     if [[ -d "$project_name" ]]; then
         echo -e "${RED}❌ Directory $project_name already exists${NC}"
         exit 1
     fi
-    
+
     init_project "$project_type" "$project_name"
 }
 

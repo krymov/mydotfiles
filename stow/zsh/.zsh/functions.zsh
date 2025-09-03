@@ -296,7 +296,7 @@ esac
 # Python environment management
 py-env() {
     local env_type="${1:-status}"
-    
+
     case "$env_type" in
         "minimal"|"min")
             echo "🐍 Switching to Python minimal environment"
@@ -323,14 +323,14 @@ py-env() {
 py-new() {
     local project_name="$1"
     local env_type="${2:-minimal}"
-    
+
     if [[ -z "$project_name" ]]; then
         echo "Usage: py-new <project-name> [minimal|full]"
         echo "  minimal - Basic uv + ruff setup (default)"
         echo "  full    - Full development environment"
         return 1
     fi
-    
+
     if [[ "$env_type" == "full" ]]; then
         PYTHON_ENV=full project-init python "$project_name"
     else
@@ -341,19 +341,19 @@ py-new() {
 # Quick uv project setup in current directory
 py-here() {
     local env_type="${1:-minimal}"
-    
+
     if [[ -f "pyproject.toml" ]]; then
         echo "⚠️  pyproject.toml already exists"
         return 1
     fi
-    
+
     echo "🐍 Setting up Python project in current directory"
-    
+
     if [[ "$env_type" == "full" ]]; then
         export PYTHON_ENV=full
         echo 'export PYTHON_ENV=full' > .env
     fi
-    
+
     # Create .envrc
     cat > .envrc << 'EOF'
 use flake ~/.dotfiles/flakes/python
@@ -363,7 +363,7 @@ PATH_add scripts
 
 if [[ "${PYTHON_ENV:-minimal}" == "full" ]]; then
   echo "Using Python full environment"
-else  
+else
   echo "Using Python minimal environment"
 fi
 
@@ -373,11 +373,11 @@ alias lint="ruff check ."
 alias format="ruff format ."
 alias check="ruff check . && ruff format --check ."
 EOF
-    
+
     # Initialize uv project
     uv init --no-readme
     direnv allow
-    
+
     echo "✅ Python environment ready!"
     echo "🚀 Next steps:"
     echo "  uv add requests            # Add dependencies"

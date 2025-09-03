@@ -132,16 +132,16 @@ direnv allow
             python311
             python311Packages.pip
             python311Packages.virtualenv
-            
+
             # Development tools
             git
             curl
             jq
-            
+
             # Project specific tools
             postgresql
             redis
-            
+
             # Cachix for binary caching
             cachix
           ];
@@ -158,17 +158,17 @@ direnv allow
             echo "  pip install -r requirements.txt"
             echo "  python manage.py runserver"
             echo ""
-            
+
             # Set up project-specific environment
             export PROJECT_ROOT=$(pwd)
             export DATABASE_URL="postgresql://localhost/myproject_dev"
-            
+
             # Create virtual environment if it doesn't exist
             if [[ ! -d .venv ]]; then
               echo "📦 Creating Python virtual environment..."
               python -m venv .venv
             fi
-            
+
             source .venv/bin/activate
           '';
         };
@@ -200,7 +200,7 @@ outputs = { self, nixpkgs, flake-utils }:
             export DEBUG="true"
           '';
         };
-        
+
         # Testing environment
         test = pkgs.mkShell {
           buildInputs = basePackages ++ (with pkgs; [
@@ -212,7 +212,7 @@ outputs = { self, nixpkgs, flake-utils }:
             export DATABASE_URL="postgresql://localhost/myproject_test"
           '';
         };
-        
+
         # Production-like environment
         prod = pkgs.mkShell {
           buildInputs = basePackages ++ (with pkgs; [
@@ -408,11 +408,11 @@ git commit -m "Update nix dependencies"
 # flakes/shared/flake.nix - Shared base
 {
   description = "Shared development tools";
-  
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
-  
+
   outputs = { self, nixpkgs }:
     let
       forAllSystems = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-darwin" "x86_64-darwin" ];
@@ -435,7 +435,7 @@ git commit -m "Update nix dependencies"
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     shared.url = "path:~/.dotfiles/flakes/shared";
   };
-  
+
   outputs = { self, nixpkgs, shared }:
     # Use shared.packages.${system}.devTools in your buildInputs
 }
@@ -565,7 +565,7 @@ cstatus
 
 Check out these example project setups in your dotfiles:
 - [`flakes/python/`](../flakes/python/) - Python development
-- [`flakes/go/`](../flakes/go/) - Go development  
+- [`flakes/go/`](../flakes/go/) - Go development
 - [`flakes/nodejs/`](../flakes/nodejs/) - Node.js development
 - [`flakes/rust/`](../flakes/rust/) - Rust development
 - [`flakes/data/`](../flakes/data/) - Data analysis environment
