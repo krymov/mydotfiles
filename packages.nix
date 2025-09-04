@@ -149,7 +149,7 @@ let
   cryptoPackages = with pkgs; [
     # Core tools
     nodejs
-    yarn
+    # yarn  # Removed to avoid conflict - use pnpm instead (already included in devPackages)
     docker
     websocat
     grpcurl

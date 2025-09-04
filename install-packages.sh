@@ -33,29 +33,14 @@ ENVIRONMENT="${1:-development}"
 
 log_info "Installing packages for environment: $ENVIRONMENT"
 
-# Create a temporary Nix expression that exposes our packages
-cat > /tmp/install-packages.nix << EOF
-let
-  pkgs = import <nixpkgs> {};
-  packages = import $(pwd)/packages.nix { inherit pkgs; environment = "$ENVIRONMENT"; };
-in
-  pkgs.buildEnv {
-    name = "dotfiles-packages-$ENVIRONMENT";
-    paths = packages;
-  }
-EOF
-
-# Install using nix-env
+# Install packages directly without buildEnv to avoid file conflicts
 log_info "Installing packages..."
-if nix-env -i -f /tmp/install-packages.nix; then
+if nix-env -f packages.nix -i --arg environment "\"$ENVIRONMENT\""; then
     log_success "Packages installed successfully!"
 else
     log_error "Failed to install packages"
     exit 1
 fi
-
-# Clean up
-rm -f /tmp/install-packages.nix
 
 log_info "Installed packages for environment: $ENVIRONMENT"
 log_info "Available environments: development, server, minimal"
