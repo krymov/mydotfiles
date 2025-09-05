@@ -138,6 +138,7 @@ let
     # terraform
     dotnet-sdk_8
     doctl
+    infisical
 
     # Database tools
     # postgresql
