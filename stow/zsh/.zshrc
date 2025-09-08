@@ -139,3 +139,5 @@ export PATH="/Users/mark/.dotfiles:$PATH"
 
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /Users/mark/.nix-profile/bin/terraform terraform
+export USE_GKE_GCLOUD_AUTH_PLUGIN=True
+export USE_GKE_GCLOUD_AUTH_PLUGIN=True

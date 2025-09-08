@@ -128,9 +128,10 @@ let
     # docker-compose
 
     # Kubernetes tools
-    # kubectl
-    # kubectx
-    # stern
+    kubectl
+    kubectx
+    stern
+    kubernetes-helm
 
     # Cloud tools
     # awscli2
@@ -138,6 +139,7 @@ let
     # terraform
     dotnet-sdk_8
     doctl
+
     # Database tools
     # postgresql
     # redis
