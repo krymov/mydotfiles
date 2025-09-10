@@ -141,3 +141,8 @@ autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /Users/mark/.nix-profile/bin/terraform terraform
 export USE_GKE_GCLOUD_AUTH_PLUGIN=True
 export USE_GKE_GCLOUD_AUTH_PLUGIN=True
+
+# AI API Keys for CodeCompanion
+if [[ -f /Users/mark/.config/ai-keys.env ]]; then
+  source /Users/mark/.config/ai-keys.env
+fi

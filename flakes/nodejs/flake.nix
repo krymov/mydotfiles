@@ -19,20 +19,19 @@
             nodePackages.npm
             nodePackages.yarn
             nodePackages.pnpm
-            
+
             # Language servers and tools
             nodePackages.typescript-language-server
             nodePackages.eslint
             nodePackages.prettier
             nodePackages.typescript
-            
+
             # Build tools
-            nodePackages.vite
             nodePackages.webpack-cli
-            
+
             # Testing
             nodePackages.jest
-            
+
             # Development utilities
             git
             curl
@@ -54,14 +53,14 @@
             echo "  prettier   - Code formatter"
             echo "  vite       - Build tool"
             echo ""
-            
+
             # Set up Node.js environment
             export NPM_CONFIG_PREFIX="$PWD/.npm-global"
             export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
-            
+
             # Create npm directory
             mkdir -p .npm-global
-            
+
             echo "NPM global prefix set to: $NPM_CONFIG_PREFIX"
             echo ""
             echo "Quick start:"
