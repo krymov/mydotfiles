@@ -6,6 +6,7 @@
 let
   # Core development tools (always included)
   corePackages = with pkgs; [
+    nix-search-cli
     # Shell and terminal
     zsh
     tmux
@@ -39,6 +40,8 @@ let
     # Basic data tools (lightweight, useful everywhere)
     jq
     yq-go            # Use yq-go instead of python yq to avoid conflicts
+
+    unixtools.watch
   ];
 
   # Data analysis and processing tools (for development environments)
@@ -98,6 +101,7 @@ let
   devPackages = with pkgs; [
     # Python development (core tools always available)
     python312
+    python312Packages.youtrack-cli
     uv              # Fast Python package manager
     ruff            # Fast Python linter and formatter
 
