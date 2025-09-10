@@ -101,7 +101,7 @@ let
   devPackages = with pkgs; [
     # Python development (core tools always available)
     python312
-    python312Packages.youtrack-cli
+    pipx            # Install Python CLI tools globally (use: pipx install youtrack-cli)
     uv              # Fast Python package manager
     ruff            # Fast Python linter and formatter
 
