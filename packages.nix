@@ -15,6 +15,9 @@ let
     stow
     tree
 
+    # Screenshots
+    flameshot
+
     # Text processing and search (essential)
     ripgrep
     fd

@@ -30,7 +30,6 @@
             nodePackages.webpack-cli
 
             # Testing
-            nodePackages.jest
 
             # Development utilities
             git
