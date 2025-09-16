@@ -57,45 +57,29 @@ if ! command -v nix-env >/dev/null 2>&1; then
     exit 1
 fi
 
-# Install base packages via Nix
-log_info "Installing base packages via Nix..."
-nix-env -iA \
-  nixpkgs.stow \
-  nixpkgs.git \
-  nixpkgs.tmux \
-  nixpkgs.zsh \
-  nixpkgs.fzf \
-  nixpkgs.ripgrep \
-  nixpkgs.fd \
-  nixpkgs.eza \
-  nixpkgs.bat \
-  nixpkgs.direnv \
-  nixpkgs.gh \
-  nixpkgs.lazygit \
-  nixpkgs.neovim \
-  nixpkgs.curl \
-  nixpkgs.wget \
-  nixpkgs.tree \
-  nixpkgs.htop || {
-    log_warning "Some packages failed to install, continuing..."
-}
+# Install packages via Home Manager
+log_info "Setting up Home Manager for declarative package management..."
 
-# Platform-specific package installation
-case "$PLATFORM" in
-    "nixos"|"linux")
-        log_info "Installing Linux-specific packages..."
-        nix-env -iA nixpkgs.kitty nixpkgs.xclip || log_warning "Failed to install some Linux packages"
-        ;;
-    "macos")
-        log_info "Installing macOS-specific packages..."
-        # On macOS, kitty might be better installed via Homebrew
-        if command -v brew >/dev/null 2>&1; then
-            brew install --cask kitty || log_warning "Failed to install kitty via Homebrew"
-        else
-            nix-env -iA nixpkgs.kitty || log_warning "Failed to install kitty via Nix"
-        fi
-        ;;
-esac
+# Install Home Manager if not present
+if ! command -v home-manager >/dev/null 2>&1; then
+    log_info "Home Manager not found, installing..."
+    ./install-home-manager.sh
+else
+    log_info "Home Manager is already installed, applying configuration..."
+    # Ensure configuration is linked
+    mkdir -p "$HOME/.config/home-manager"
+    if [[ ! -L "$HOME/.config/home-manager/home.nix" ]]; then
+        ln -sf "$(pwd)/home.nix" "$HOME/.config/home-manager/home.nix"
+        log_info "Linked configuration to ~/.config/home-manager/home.nix"
+    fi
+    
+    # Apply the configuration
+    home-manager switch || {
+        log_warning "Home Manager switch failed, but continuing with setup..."
+    }
+fi
+
+log_success "Package installation completed via Home Manager"
 
 # Set zsh as default shell
 log_info "Setting up zsh as default shell..."
@@ -191,7 +175,9 @@ else
         cp -r stow/nvim/.config/nvim/* ~/.config/nvim/
         log_success "User configuration updated"
     fi
-fi# Create initial tmux session
+fi
+
+# Create initial tmux session
 log_info "Setting up tmux..."
 if command -v tmux >/dev/null 2>&1; then
     # Kill any existing default session

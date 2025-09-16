@@ -38,7 +38,7 @@ let
     htop
 
     # Editors
-    neovim
+    # neovim  # Removed - configured via programs.neovim in home.nix
 
     # Basic data tools (lightweight, useful everywhere)
     jq
@@ -116,7 +116,7 @@ let
     # Go development
     go              # Go compiler and tools
     golangci-lint   # Go linter
-
+    hugo
     # JavaScript tooling (for React/frontend)
     nodePackages.typescript
     nodePackages.eslint
