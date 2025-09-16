@@ -50,8 +50,8 @@ home-manager packages
 Edit `home.nix` and change the environment:
 
 ```nix
-packages = import ./packages.nix { 
-  inherit pkgs; 
+packages = import ./packages.nix {
+  inherit pkgs;
   environment = "development"; # or "server" or "minimal"
 };
 ```

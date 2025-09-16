@@ -72,7 +72,7 @@ else
         ln -sf "$(pwd)/home.nix" "$HOME/.config/home-manager/home.nix"
         log_info "Linked configuration to ~/.config/home-manager/home.nix"
     fi
-    
+
     # Apply the configuration
     home-manager switch || {
         log_warning "Home Manager switch failed, but continuing with setup..."
