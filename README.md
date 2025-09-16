@@ -1,57 +1,39 @@
 # 🚀 Mark's Dotfiles
 
-> A modern, AI-enhanced development environment that works across macOS and Linux
+> Modern, declarative development environment with Home Manager and Nix
 
-Transform your development workflow with intelligent tools, seamless configuration management, and AI-powered coding assistance. This dotfiles setup provides everything you need for productive development, from smart shell completions to advanced AI coding agents.
+A streamlined dotfiles setup that provides a consistent, productive development environment across macOS and Linux using Home Manager for declarative package management.
 
 ## ✨ What Makes This Special
 
-🤖 **AI-Powered Coding** - Built-in CodeCompanion with 6 specialized AI agents
-🎯 **Multiple Neovim Configs** - Switch between AstroNvim, LazyVim, and vanilla setups
-⚡ **Smart Shell** - Enhanced Zsh with intelligent completions and fuzzy finding
-🛠️ **Development Environments** - Isolated Nix flakes for Go, Python, Node.js, Rust, and data analysis
-�️ **Cachix Integration** - Binary caching for faster builds and team collaboration
-📦 **Project Templates** - One-command project initialization with flakes and direnv
-🔄 **One-Command Setup** - Automated installation with backup protection
-🎨 **Beautiful Terminal** - Modern tools with syntax highlighting and git integration
+🏗️ **Declarative Configuration** - All packages managed via Home Manager and Nix
+⚡ **One-Command Setup** - Automated installation with `./bootstrap.sh`
+🛠️ **Development Environments** - Isolated Nix flakes for Go, Python, Node.js, Rust
+🎯 **Multiple Neovim Configs** - Easy switching between different editor setups
+🔄 **Cross-Platform** - Works seamlessly on macOS and Linux
+🧹 **Clean & Minimal** - No bloat, just essential productivity tools
 
-## 🎬 Quick Demo
+## 🚀 Quick Setup
 
-```bash
-# 1. Clone and setup (takes ~2 minutes)
-git clone https://github.com/krymov/mydotfiles.git ~/.dotfiles
-cd ~/.dotfiles && ./setup.sh
+1. **Install Nix** (if not already installed):
+   ```bash
+   curl -L https://nixos.org/nix/install | sh
+   source ~/.nix-profile/etc/profile.d/nix.sh
+   ```
 
-# 2. Create a new project with isolated environment
-pinit python my-ml-project
-cd my-ml-project  # Environment loads automatically!
+2. **Clone and setup**:
+   ```bash
+   git clone https://github.com/krymov/mydotfiles.git ~/.dotfiles
+   cd ~/.dotfiles
+   ./bootstrap.sh
+   ```
 
-# 3. Launch Neovim with AI assistance
-nvim-switch switch astronvim && nvim
-```
+3. **Restart your shell**:
+   ```bash
+   exec zsh
+   ```
 
-## 🛠️ Per-Project Development Environments
-
-This setup provides powerful project isolation using Nix flakes and direnv:
-
-```bash
-# Quick project creation
-pinit python my-ml-app      # Python with ML tools
-pinit go my-api-server      # Go with dev tools
-pinit nodejs my-web-app     # Node.js with modern stack
-pinit rust my-cli-tool      # Rust with cargo tools
-pinit data my-analysis      # Data analysis environment
-pinit fullstack my-saas     # Full-stack project
-
-# Cachix integration for fast builds
-csetup my-project-cache     # Setup binary cache
-cpush my-project-cache      # Push environment to cache
-cwatch my-project-cache     # Auto-push builds
-```
-
-📖 **[Complete Project Guide](guides/project-flakes-guide.md)** - Step-by-step instructions for organizing per-project flakes
-
-## 📦 Quick Setup
+That's it! 🎉
 
 # Select code → <leader>ar (refactor)- **Git**: Branch names, tags, remotes, and git command options
 

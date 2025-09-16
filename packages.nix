@@ -44,6 +44,8 @@ let
     jq
     yq-go            # Use yq-go instead of python yq to avoid conflicts
 
+    just             # Command runner (like make but simpler)
+
     unixtools.watch
   ];
 

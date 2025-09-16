@@ -222,7 +222,7 @@ apt update && apt upgrade      # Ubuntu
 # Update dotfiles
 cd ~/.dotfiles
 gl                            # Pull latest changes
-./setup.sh                    # Re-run setup if needed
+./bootstrap.sh                  # Re-run setup if needed
 
 # Update Neovim plugins
 nvim +Lazy sync +qa
