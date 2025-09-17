@@ -75,12 +75,12 @@ else
 
     # Force a timestamp update to ensure Home Manager detects changes
     touch "$(pwd)/home.nix" "$(pwd)/packages.nix"
-    
+
     # Apply the configuration with better error handling
     log_info "Applying Home Manager configuration..."
     if home-manager switch; then
         log_success "Home Manager configuration applied successfully"
-        
+
         # Rebuild zsh completions to sync with new packages
         log_info "Rebuilding zsh completions..."
         if command -v compinit >/dev/null 2>&1; then
