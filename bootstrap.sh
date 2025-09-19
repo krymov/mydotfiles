@@ -50,52 +50,60 @@ detect_platform() {
 PLATFORM=$(detect_platform)
 log_info "Detected platform: $PLATFORM"
 
-# Check if Nix is available
-if ! command -v nix-env >/dev/null 2>&1; then
-    log_error "Nix package manager not found. Please install Nix first:"
-    echo "  curl -L https://nixos.org/nix/install | sh"
-    exit 1
-fi
+# Check if Nix is available and install packages if present
+if command -v nix-env >/dev/null 2>&1; then
+    log_info "Nix found - setting up Home Manager for declarative package management..."
 
-# Install packages via Home Manager
-log_info "Setting up Home Manager for declarative package management..."
+    # Install Home Manager if not present
+    if ! command -v home-manager >/dev/null 2>&1; then
+        log_info "Home Manager not found, installing..."
+        if [[ -f "./install-home-manager.sh" ]]; then
+            ./install-home-manager.sh
+        else
+            log_warning "install-home-manager.sh not found, skipping Home Manager setup"
+        fi
+    else
+        log_info "Home Manager is already installed, applying configuration..."
+        # Ensure configuration is linked
+        mkdir -p "$HOME/.config/home-manager"
+        if [[ ! -L "$HOME/.config/home-manager/home.nix" ]]; then
+            ln -sf "$(pwd)/home.nix" "$HOME/.config/home-manager/home.nix"
+            log_info "Linked configuration to ~/.config/home-manager/home.nix"
+        fi
 
-# Install Home Manager if not present
-if ! command -v home-manager >/dev/null 2>&1; then
-    log_info "Home Manager not found, installing..."
-    ./install-home-manager.sh
-else
-    log_info "Home Manager is already installed, applying configuration..."
-    # Ensure configuration is linked
-    mkdir -p "$HOME/.config/home-manager"
-    if [[ ! -L "$HOME/.config/home-manager/home.nix" ]]; then
-        ln -sf "$(pwd)/home.nix" "$HOME/.config/home-manager/home.nix"
-        log_info "Linked configuration to ~/.config/home-manager/home.nix"
+        # Force a timestamp update to ensure Home Manager detects changes
+        touch "$(pwd)/home.nix" "$(pwd)/packages.nix"
+
+        # Apply the configuration with better error handling
+        log_info "Applying Home Manager configuration..."
+        log_warning "This may take a while on first run..."
+
+        # Try to apply with timeout handling
+        if timeout 300 home-manager switch 2>/dev/null || home-manager switch --show-trace; then
+            log_success "Home Manager configuration applied successfully"
+
+            # Rebuild zsh completions to sync with new packages
+            log_info "Rebuilding zsh completions..."
+            if command -v compinit >/dev/null 2>&1; then
+                # Remove completion dump to force rebuild
+                rm -f ~/.zcompdump*
+                # Reinitialize completions in current shell if possible
+                autoload -U compinit && compinit
+            fi
+            log_success "Zsh completions rebuilt"
+        else
+            log_warning "Home Manager switch failed or timed out, but continuing with setup..."
+            log_info "You can try running 'home-manager switch' manually later"
+        fi
     fi
 
-    # Force a timestamp update to ensure Home Manager detects changes
-    touch "$(pwd)/home.nix" "$(pwd)/packages.nix"
-
-    # Apply the configuration with better error handling
-    log_info "Applying Home Manager configuration..."
-    if home-manager switch; then
-        log_success "Home Manager configuration applied successfully"
-
-        # Rebuild zsh completions to sync with new packages
-        log_info "Rebuilding zsh completions..."
-        if command -v compinit >/dev/null 2>&1; then
-            # Remove completion dump to force rebuild
-            rm -f ~/.zcompdump*
-            # Reinitialize completions in current shell if possible
-            autoload -U compinit && compinit
-        fi
-        log_success "Zsh completions rebuilt"
-    else
-        log_warning "Home Manager switch failed, but continuing with setup..."
-    }
+    log_success "Package installation completed via Home Manager"
+else
+    log_warning "Nix package manager not found. Skipping package installation."
+    log_info "If you want to use Nix/Home Manager, install Nix first:"
+    echo "  curl -L https://nixos.org/nix/install | sh"
+    log_info "Continuing with dotfiles setup using system packages..."
 fi
-
-log_success "Package installation completed via Home Manager"
 
 # Set zsh as default shell
 log_info "Setting up zsh as default shell..."

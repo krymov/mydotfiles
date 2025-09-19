@@ -46,6 +46,8 @@ let
 
     just             # Command runner (like make but simpler)
 
+    cloudflared
+    
     unixtools.watch
   ];
 
