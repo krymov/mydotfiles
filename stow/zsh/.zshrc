@@ -46,8 +46,6 @@ path=(
   "$HOME/.dotfiles/bin"
   "$HOME/.local/bin"
   "$HOME/bin"
-  "$HOME/.nix-profile/bin"
-  "/nix/var/nix/profiles/default/bin"
   $path
 )
 export PATH
@@ -59,10 +57,7 @@ export PAGER="less"
 export LESS="-R"
 export BROWSER="firefox"
 
-# Nix-specific environment (if using Nix on non-NixOS)
-if [[ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]]; then
-  source "$HOME/.nix-profile/etc/profile.d/nix.sh"
-fi
+
 
 # XDG Base Directory Specification
 export XDG_CONFIG_HOME="$HOME/.config"
@@ -138,7 +133,7 @@ PS1='%F{cyan}%n%f@%F{yellow}%m%f %F{green}%1~%f${vcs_info_msg_0_} %# '
 export PATH="/Users/mark/.dotfiles:$PATH"
 
 autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /Users/mark/.nix-profile/bin/terraform terraform
+# complete -o nospace -C /path/to/terraform terraform  # Enable when terraform is installed
 export USE_GKE_GCLOUD_AUTH_PLUGIN=True
 export USE_GKE_GCLOUD_AUTH_PLUGIN=True
 

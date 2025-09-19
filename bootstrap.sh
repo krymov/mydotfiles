@@ -73,26 +73,10 @@ else
         log_info "Linked configuration to ~/.config/home-manager/home.nix"
     fi
 
-    # Force a timestamp update to ensure Home Manager detects changes
-    touch "$(pwd)/home.nix" "$(pwd)/packages.nix"
-    
-    # Apply the configuration with better error handling
-    log_info "Applying Home Manager configuration..."
-    if home-manager switch; then
-        log_success "Home Manager configuration applied successfully"
-        
-        # Rebuild zsh completions to sync with new packages
-        log_info "Rebuilding zsh completions..."
-        if command -v compinit >/dev/null 2>&1; then
-            # Remove completion dump to force rebuild
-            rm -f ~/.zcompdump*
-            # Reinitialize completions in current shell if possible
-            autoload -U compinit && compinit
-        fi
-        log_success "Zsh completions rebuilt"
-    else
+    # Apply the configuration
+    home-manager switch || {
         log_warning "Home Manager switch failed, but continuing with setup..."
-    fi
+    }
 fi
 
 log_success "Package installation completed via Home Manager"
@@ -205,7 +189,7 @@ fi
 log_success "Dotfiles setup complete!"
 echo
 log_info "Next steps:"
-echo "  1. Restart your terminal or run 'exec zsh' to load updated completions"
+echo "  1. Open a new terminal to load zsh configuration"
 echo "  2. Run 'tmux' to start a tmux session"
 echo "  3. Run 'nvim' to initialize AstroNvim (it will download plugins automatically)"
 echo "  4. Consider running 'git config --global user.name \"Your Name\"'"
