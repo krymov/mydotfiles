@@ -47,6 +47,7 @@ let
     just             # Command runner (like make but simpler)
 
     cloudflared
+    ngrok
     
     unixtools.watch
   ];
