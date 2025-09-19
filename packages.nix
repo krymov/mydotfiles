@@ -153,6 +153,8 @@ let
     # postgresql
     # redis
     # sqlite
+
+    pandoc texliveFull
   ];
 
   # Crypto development packages

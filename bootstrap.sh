@@ -73,8 +73,24 @@ else
         log_info "Linked configuration to ~/.config/home-manager/home.nix"
     fi
 
-    # Apply the configuration
-    home-manager switch || {
+    # Force a timestamp update to ensure Home Manager detects changes
+    touch "$(pwd)/home.nix" "$(pwd)/packages.nix"
+
+    # Apply the configuration with better error handling
+    log_info "Applying Home Manager configuration..."
+    if home-manager switch; then
+        log_success "Home Manager configuration applied successfully"
+
+        # Rebuild zsh completions to sync with new packages
+        log_info "Rebuilding zsh completions..."
+        if command -v compinit >/dev/null 2>&1; then
+            # Remove completion dump to force rebuild
+            rm -f ~/.zcompdump*
+            # Reinitialize completions in current shell if possible
+            autoload -U compinit && compinit
+        fi
+        log_success "Zsh completions rebuilt"
+    else
         log_warning "Home Manager switch failed, but continuing with setup..."
     }
 fi
