@@ -15,6 +15,9 @@ let
     else "/home/${username}";
 in
 {
+  # Allow unfree packages
+  nixpkgs.config.allowUnfree = true;
+
   # Home Manager needs information about you and the paths it should manage
   home.username = username;
   home.homeDirectory = homeDirectory;
