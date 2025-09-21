@@ -4,8 +4,8 @@
 return {
   -- Import AI-powered coding assistant
   -- Provides VS Code-style AI agents with custom roles
-  require("plugins.codecompanion"),
-  
+  -- require("plugins.codecompanion"),
+
   -- Add other custom plugins here
   -- Example:
   -- {

@@ -1,579 +1,546 @@
--- CodeCompanion: Advanced AI-powered coding assistant with agentic capabilities
--- Provides VS Code-style AI agents with custom roles, tools, and context awareness
+-- -- CodeCompanion: Advanced AI-powered coding assistant with agentic capabilities
+-- -- Provides VS Code-style AI agents with custom roles, tools, and context awareness
 
-return {
-  "olimorris/codecompanion.nvim",
-  dependencies = {
-    "nvim-lua/plenary.nvim",
-    "nvim-treesitter/nvim-treesitter",
-    "hrsh7th/nvim-cmp", -- For completion
-    "nvim-telescope/telescope.nvim", -- For file/symbol search
-    {
-      "stevearc/dressing.nvim", -- Enhanced UI for input dialogs
-      opts = {},
-    },
-  },
-  config = function()
-    local codecompanion = require("codecompanion")
-    
-    -- Helper function to safely get API keys from environment
-    local function get_api_key(provider)
-      local key_map = {
-        openai = "OPENAI_API_KEY",
-        anthropic = "ANTHROPIC_API_KEY",
-        gemini = "GEMINI_API_KEY",
-      }
-      
-      local env_var = key_map[provider]
-      if not env_var then
-        return nil
-      end
-      
-      local key = vim.fn.getenv(env_var)
-      if key == vim.NIL or key == "" then
-        vim.notify(
-          string.format("Warning: %s not found in environment. %s provider will not work.", env_var, provider),
-          vim.log.levels.WARN
-        )
-        return nil
-      end
-      
-      return key
-    end
+-- return {
+--   "olimorris/codecompanion.nvim",
+--   dependencies = {
+--     "nvim-lua/plenary.nvim",
+--     "nvim-treesitter/nvim-treesitter",
+--     "hrsh7th/nvim-cmp", -- For completion
+--     "nvim-telescope/telescope.nvim", -- For file/symbol search
+--     {
+--       "stevearc/dressing.nvim", -- Enhanced UI for input dialogs
+--       opts = {},
+--     },
+--   },
+--   config = function()
+--     local codecompanion = require("codecompanion")
 
-    -- Dynamic adapter configuration based on available API keys
-    local function get_available_adapters()
-      local adapters = {}
-      
-      -- OpenAI adapters
-      if get_api_key("openai") then
-        adapters.openai_gpt4o = {
-          name = "openai",
-          model = "gpt-4o",
-          api_key = get_api_key("openai"),
-        }
-        adapters.openai_gpt4o_mini = {
-          name = "openai", 
-          model = "gpt-4o-mini",
-          api_key = get_api_key("openai"),
-        }
-      end
-      
-      -- Anthropic adapters  
-      if get_api_key("anthropic") then
-        adapters.anthropic_sonnet = {
-          name = "anthropic",
-          model = "claude-3-5-sonnet-20241022",
-          api_key = get_api_key("anthropic"),
-        }
-        adapters.anthropic_haiku = {
-          name = "anthropic",
-          model = "claude-3-5-haiku-20241022", 
-          api_key = get_api_key("anthropic"),
-        }
-      end
-      
-      -- Gemini adapters
-      if get_api_key("gemini") then
-        adapters.gemini_pro = {
-          name = "gemini",
-          model = "gemini-1.5-pro-latest",
-          api_key = get_api_key("gemini"),
-        }
-      end
-      
-      -- Ollama (local) - always available if ollama is running
-      adapters.ollama_llama = {
-        name = "ollama",
-        model = "llama3.1:latest",
-        url = "http://localhost:11434",
-      }
-      
-      adapters.ollama_codestral = {
-        name = "ollama", 
-        model = "codestral:latest",
-        url = "http://localhost:11434",
-      }
-      
-      return adapters
-    end
+--     -- Helper function to safely get Anthropic API key from environment
+--     local function get_anthropic_key()
+--       local key = vim.fn.getenv("ANTHROPIC_API_KEY")
+--       if key == vim.NIL or key == "" then
+--         vim.notify(
+--           "Warning: ANTHROPIC_API_KEY not found in environment. CodeCompanion will not work.",
+--           vim.log.levels.WARN
+--         )
+--         return nil
+--       end
 
-    -- Get default adapter (prefer Anthropic > OpenAI > Ollama)
-    local function get_default_adapter()
-      if get_api_key("anthropic") then
-        return "anthropic_sonnet"
-      elseif get_api_key("openai") then 
-        return "openai_gpt4o"
-      else
-        return "ollama_llama"
-      end
-    end
+--       return key
+--     end
 
-    codecompanion.setup({
-      adapters = get_available_adapters(),
-      
-      strategies = {
-        chat = {
-          adapter = get_default_adapter(),
-        },
-        inline = {
-          adapter = get_default_adapter(),
-        },
-        agent = {
-          adapter = "anthropic_sonnet", -- Use best model for agents
-        },
-      },
-      
-      -- Custom agent roles with specific capabilities
-      prompts = {
-        -- Code Refactoring Agent
-        ["Refactor"] = {
-          strategy = "chat",
-          description = "Refactor code while preserving behavior",
-          opts = {
-            adapter = get_api_key("anthropic") and "anthropic_sonnet" or get_default_adapter(),
-            auto_submit = false,
-          },
-          prompts = {
-            {
-              role = "system", 
-              content = [[You are a precise refactoring assistant. Your goals:
+--     -- Anthropic-only adapter configuration
+--     local function get_available_adapters()
+--       local anthropic_key = get_anthropic_key()
+--       if not anthropic_key then
+--         return {}
+--       end
 
-1. **Preserve Behavior**: Never change what the code does, only how it does it
-2. **Improve Readability**: Make code clearer and more maintainable
-3. **Minimal Changes**: Make the smallest changes necessary
-4. **Best Practices**: Apply language-specific conventions and patterns
-5. **Performance**: Consider performance implications
+--       return {
+--         -- Claude 3.5 Sonnet - Best for complex tasks, reasoning, and coding
+--         anthropic_sonnet = {
+--           name = "anthropic",
+--           model = "claude-3-5-sonnet-20241022",
+--           api_key = anthropic_key,
+--         },
+--         -- Claude 3.5 Haiku - Faster and cheaper for simpler tasks
+--         anthropic_haiku = {
+--           name = "anthropic",
+--           model = "claude-3-5-haiku-20241022",
+--           api_key = anthropic_key,
+--         },
+--       }
+--     end
 
-Focus on:
-- Extracting functions/methods when appropriate
-- Improving naming conventions
-- Reducing complexity and nesting
-- Eliminating code duplication
-- Adding appropriate error handling
-- Optimizing imports and dependencies
+--     -- Get default adapter - always use Sonnet for primary tasks
+--     local function get_default_adapter()
+--       local anthropic_key = get_anthropic_key()
+--       if anthropic_key then
+--         return "anthropic_sonnet"
+--       else
+--         return nil
+--       end
+--     end
 
-Always explain your changes and reasoning.]],
-            },
-            {
-              role = "user",
-              content = function()
-                return "Please refactor this code:\n\n```"
-                  .. vim.bo.filetype
-                  .. "\n"
-                  .. require("codecompanion.helpers.actions").get_code(vim.fn.line("'<"), vim.fn.line("'>"))
-                  .. "\n```"
-              end,
-            },
-          },
-        },
+--     -- Get efficient adapter for simple tasks
+--     local function get_efficient_adapter()
+--       local anthropic_key = get_anthropic_key()
+--       if anthropic_key then
+--         return "anthropic_haiku"
+--       else
+--         return nil
+--       end
+--     end
 
-        -- Test Generation Agent
-        ["TestGen"] = {
-          strategy = "chat",
-          description = "Generate comprehensive unit tests",
-          opts = {
-            adapter = get_api_key("openai") and "openai_gpt4o" or get_default_adapter(),
-            auto_submit = false,
-          },
-          prompts = {
-            {
-              role = "system",
-              content = [[You are a test generation specialist. Create comprehensive, maintainable tests that:
+--     codecompanion.setup({
+--       adapters = get_available_adapters(),
 
-1. **Cover Edge Cases**: Test boundary conditions, null/empty inputs, error conditions
-2. **Use Table-Driven Tests**: When appropriate for the language (Go, etc.)
-3. **Clear Test Names**: Descriptive test function/method names
-4. **Arrange-Act-Assert**: Structure tests clearly
-5. **Mock Dependencies**: Use appropriate mocking for external dependencies
-6. **Test Data**: Create realistic test data and fixtures
+--       strategies = {
+--         chat = {
+--           adapter = get_default_adapter(), -- Claude Sonnet for conversations
+--         },
+--         inline = {
+--           adapter = get_efficient_adapter(), -- Claude Haiku for quick inline assistance
+--         },
+--         agent = {
+--           adapter = get_default_adapter(), -- Claude Sonnet for complex agent tasks
+--         },
+--       },
 
-For each function/method:
-- Test happy path scenarios
-- Test error conditions and edge cases  
-- Test with various input combinations
-- Verify all expected outputs and side effects
+--       -- Custom agent roles with specific capabilities
+--       prompts = {
+--         -- Code Refactoring Agent
+--         ["Refactor"] = {
+--           strategy = "chat",
+--           description = "Refactor code while preserving behavior",
+--           opts = {
+--             adapter = get_default_adapter(), -- Use Sonnet for complex refactoring
+--             auto_submit = false,
+--           },
+--           prompts = {
+--             {
+--               role = "system",
+--               content = [[You are a precise refactoring assistant. Your goals:
 
-Include setup/teardown when needed and explain testing strategy.]],
-            },
-            {
-              role = "user", 
-              content = function()
-                return "Generate comprehensive tests for this code:\n\n```"
-                  .. vim.bo.filetype
-                  .. "\n"
-                  .. require("codecompanion.helpers.actions").get_code(vim.fn.line("'<"), vim.fn.line("'>"))
-                  .. "\n```"
-              end,
-            },
-          },
-        },
+-- 1. **Preserve Behavior**: Never change what the code does, only how it does it
+-- 2. **Improve Readability**: Make code clearer and more maintainable
+-- 3. **Minimal Changes**: Make the smallest changes necessary
+-- 4. **Best Practices**: Apply language-specific conventions and patterns
+-- 5. **Performance**: Consider performance implications
 
-        -- Code Review Agent
-        ["Reviewer"] = {
-          strategy = "chat",
-          description = "Perform thorough code review",
-          opts = {
-            adapter = get_api_key("anthropic") and "anthropic_sonnet" or get_default_adapter(),
-            auto_submit = false,
-          },
-          prompts = {
-            {
-              role = "system",
-              content = [[You are a senior code reviewer conducting a thorough review. Focus on:
+-- Focus on:
+-- - Extracting functions/methods when appropriate
+-- - Improving naming conventions
+-- - Reducing complexity and nesting
+-- - Eliminating code duplication
+-- - Adding appropriate error handling
+-- - Optimizing imports and dependencies
 
-**Correctness**:
-- Logic errors and edge cases
-- Potential race conditions or concurrency issues
-- Error handling completeness
+-- Always explain your changes and reasoning.]],
+--             },
+--             {
+--               role = "user",
+--               content = function()
+--                 return "Please refactor this code:\n\n```"
+--                   .. vim.bo.filetype
+--                   .. "\n"
+--                   .. require("codecompanion.helpers.actions").get_code(vim.fn.line("'<"), vim.fn.line("'>"))
+--                   .. "\n```"
+--               end,
+--             },
+--           },
+--         },
 
-**Security**:
-- Input validation and sanitization
-- Authentication and authorization
-- Sensitive data handling
-- Injection vulnerabilities
+--         -- Test Generation Agent
+--         ["TestGen"] = {
+--           strategy = "chat",
+--           description = "Generate comprehensive unit tests",
+--           opts = {
+--             adapter = get_default_adapter(), -- Use Sonnet for test generation
+--             auto_submit = false,
+--           },
+--           prompts = {
+--             {
+--               role = "system",
+--               content = [[You are a test generation specialist. Create comprehensive, maintainable tests that:
 
-**Performance**:
-- Algorithm efficiency
-- Memory usage
-- Database query optimization
-- Caching opportunities
+-- 1. **Cover Edge Cases**: Test boundary conditions, null/empty inputs, error conditions
+-- 2. **Use Table-Driven Tests**: When appropriate for the language (Go, etc.)
+-- 3. **Clear Test Names**: Descriptive test function/method names
+-- 4. **Arrange-Act-Assert**: Structure tests clearly
+-- 5. **Mock Dependencies**: Use appropriate mocking for external dependencies
+-- 6. **Test Data**: Create realistic test data and fixtures
 
-**Maintainability**:
-- Code organization and structure
-- Naming conventions
-- Documentation and comments
-- Testability
+-- For each function/method:
+-- - Test happy path scenarios
+-- - Test error conditions and edge cases
+-- - Test with various input combinations
+-- - Verify all expected outputs and side effects
 
-**Style & Standards**:
-- Language-specific best practices
-- Team coding standards
-- Consistent formatting
+-- Include setup/teardown when needed and explain testing strategy.]],
+--             },
+--             {
+--               role = "user",
+--               content = function()
+--                 return "Generate comprehensive tests for this code:\n\n```"
+--                   .. vim.bo.filetype
+--                   .. "\n"
+--                   .. require("codecompanion.helpers.actions").get_code(vim.fn.line("'<"), vim.fn.line("'>"))
+--                   .. "\n```"
+--               end,
+--             },
+--           },
+--         },
 
-Provide specific, actionable feedback with examples where helpful.]],
-            },
-            {
-              role = "user",
-              content = function()
-                return "Please review this code:\n\n```"
-                  .. vim.bo.filetype
-                  .. "\n"
-                  .. require("codecompanion.helpers.actions").get_code(vim.fn.line("'<"), vim.fn.line("'>"))
-                  .. "\n```"
-              end,
-            },
-          },
-        },
+--         -- Code Review Agent
+--         ["Reviewer"] = {
+--           strategy = "chat",
+--           description = "Perform thorough code review",
+--           opts = {
+--             adapter = get_default_adapter(), -- Use Sonnet for detailed reviews
+--             auto_submit = false,
+--           },
+--           prompts = {
+--             {
+--               role = "system",
+--               content = [[You are a senior code reviewer conducting a thorough review. Focus on:
 
-        -- Documentation Agent
-        ["Docs"] = {
-          strategy = "chat", 
-          description = "Generate comprehensive documentation",
-          opts = {
-            adapter = get_api_key("openai") and "openai_gpt4o_mini" or get_default_adapter(),
-            auto_submit = false,
-          },
-          prompts = {
-            {
-              role = "system",
-              content = [[You are a technical documentation specialist. Create clear, comprehensive documentation that:
+-- **Correctness**:
+-- - Logic errors and edge cases
+-- - Potential race conditions or concurrency issues
+-- - Error handling completeness
 
-**Code Documentation**:
-- Concise but complete function/method docstrings
-- Parameter descriptions with types and constraints
-- Return value descriptions
-- Usage examples
-- Exception/error documentation
+-- **Security**:
+-- - Input validation and sanitization
+-- - Authentication and authorization
+-- - Sensitive data handling
+-- - Injection vulnerabilities
 
-**API Documentation**:
-- Clear endpoint descriptions
-- Request/response schemas
-- Authentication requirements
-- Rate limiting and usage notes
+-- **Performance**:
+-- - Algorithm efficiency
+-- - Memory usage
+-- - Database query optimization
+-- - Caching opportunities
 
-**README Content**:
-- Project overview and purpose
-- Installation and setup instructions
-- Basic usage examples
-- Configuration options
-- Contributing guidelines
+-- **Maintainability**:
+-- - Code organization and structure
+-- - Naming conventions
+-- - Documentation and comments
+-- - Testability
 
-**Comments**:
-- Explain complex logic and algorithms
-- Document business rules and constraints
-- Clarify non-obvious code sections
+-- **Style & Standards**:
+-- - Language-specific best practices
+-- - Team coding standards
+-- - Consistent formatting
 
-Focus on clarity, accuracy, and usefulness for other developers.]],
-            },
-            {
-              role = "user",
-              content = function()
-                return "Generate documentation for this code:\n\n```"
-                  .. vim.bo.filetype
-                  .. "\n"
-                  .. require("codecompanion.helpers.actions").get_code(vim.fn.line("'<"), vim.fn.line("'>"))
-                  .. "\n```"
-              end,
-            },
-          },
-        },
+-- Provide specific, actionable feedback with examples where helpful.]],
+--             },
+--             {
+--               role = "user",
+--               content = function()
+--                 return "Please review this code:\n\n```"
+--                   .. vim.bo.filetype
+--                   .. "\n"
+--                   .. require("codecompanion.helpers.actions").get_code(vim.fn.line("'<"), vim.fn.line("'>"))
+--                   .. "\n```"
+--               end,
+--             },
+--           },
+--         },
 
-        -- Debugging Agent
-        ["Debug"] = {
-          strategy = "chat",
-          description = "Help debug issues and analyze problems",
-          opts = {
-            adapter = get_default_adapter(),
-            auto_submit = false,
-          },
-          prompts = {
-            {
-              role = "system",
-              content = [[You are a debugging specialist helping to identify and solve problems. Approach debugging systematically:
+--         -- Documentation Agent
+--         ["Docs"] = {
+--           strategy = "chat",
+--           description = "Generate comprehensive documentation",
+--           opts = {
+--             adapter = get_efficient_adapter(), -- Use Haiku for documentation (faster/cheaper)
+--             auto_submit = false,
+--           },
+--           prompts = {
+--             {
+--               role = "system",
+--               content = [[You are a technical documentation specialist. Create clear, comprehensive documentation that:
 
-**Problem Analysis**:
-- Understand the expected vs actual behavior
-- Identify symptoms and error messages
-- Consider recent changes that might have caused issues
+-- **Code Documentation**:
+-- - Concise but complete function/method docstrings
+-- - Parameter descriptions with types and constraints
+-- - Return value descriptions
+-- - Usage examples
+-- - Exception/error documentation
 
-**Root Cause Investigation**:
-- Analyze code logic step by step
-- Check for common error patterns
-- Consider environmental factors
+-- **API Documentation**:
+-- - Clear endpoint descriptions
+-- - Request/response schemas
+-- - Authentication requirements
+-- - Rate limiting and usage notes
 
-**Solution Strategy**:
-- Suggest specific debugging techniques
-- Recommend logging/instrumentation
-- Propose test cases to isolate the issue
-- Offer multiple potential solutions
+-- **README Content**:
+-- - Project overview and purpose
+-- - Installation and setup instructions
+-- - Basic usage examples
+-- - Configuration options
+-- - Contributing guidelines
 
-**Prevention**:
-- Suggest improvements to prevent similar issues
-- Recommend better error handling
-- Propose monitoring and alerting
+-- **Comments**:
+-- - Explain complex logic and algorithms
+-- - Document business rules and constraints
+-- - Clarify non-obvious code sections
 
-Provide actionable debugging steps and potential fixes.]],
-            },
-            {
-              role = "user",
-              content = function()
-                return "Help me debug this code:\n\n```"
-                  .. vim.bo.filetype
-                  .. "\n"
-                  .. require("codecompanion.helpers.actions").get_code(vim.fn.line("'<"), vim.fn.line("'>"))
-                  .. "\n```"
-              end,
-            },
-          },
-        },
+-- Focus on clarity, accuracy, and usefulness for other developers.]],
+--             },
+--             {
+--               role = "user",
+--               content = function()
+--                 return "Generate documentation for this code:\n\n```"
+--                   .. vim.bo.filetype
+--                   .. "\n"
+--                   .. require("codecompanion.helpers.actions").get_code(vim.fn.line("'<"), vim.fn.line("'>"))
+--                   .. "\n```"
+--               end,
+--             },
+--           },
+--         },
 
-        -- Architecture Agent
-        ["Architect"] = {
-          strategy = "chat",
-          description = "Provide architectural guidance and design review",
-          opts = {
-            adapter = get_api_key("anthropic") and "anthropic_sonnet" or get_default_adapter(),
-            auto_submit = false,
-          },
-          prompts = {
-            {
-              role = "system",
-              content = [[You are a senior software architect providing design guidance. Focus on:
+--         -- Debugging Agent
+--         ["Debug"] = {
+--           strategy = "chat",
+--           description = "Help debug issues and analyze problems",
+--           opts = {
+--             adapter = get_default_adapter(), -- Use Sonnet for complex debugging
+--             auto_submit = false,
+--           },
+--           prompts = {
+--             {
+--               role = "system",
+--               content = [[You are a debugging specialist helping to identify and solve problems. Approach debugging systematically:
 
-**System Design**:
-- Overall architecture patterns and principles
-- Component separation and boundaries
-- Data flow and system interactions
-- Scalability and performance considerations
+-- **Problem Analysis**:
+-- - Understand the expected vs actual behavior
+-- - Identify symptoms and error messages
+-- - Consider recent changes that might have caused issues
 
-**Design Patterns**:
-- Appropriate pattern selection for the problem
-- Implementation best practices
-- Trade-offs and alternatives
+-- **Root Cause Investigation**:
+-- - Analyze code logic step by step
+-- - Check for common error patterns
+-- - Consider environmental factors
 
-**Technology Choices**:
-- Framework and library recommendations
-- Database and storage decisions
-- Integration and communication patterns
+-- **Solution Strategy**:
+-- - Suggest specific debugging techniques
+-- - Recommend logging/instrumentation
+-- - Propose test cases to isolate the issue
+-- - Offer multiple potential solutions
 
-**Quality Attributes**:
-- Maintainability and extensibility
-- Reliability and fault tolerance
-- Security and compliance
-- Performance and scalability
+-- **Prevention**:
+-- - Suggest improvements to prevent similar issues
+-- - Recommend better error handling
+-- - Propose monitoring and alerting
 
-Provide high-level guidance with practical implementation advice.]],
-            },
-            {
-              role = "user",
-              content = function()
-                return "Please review the architecture of this code:\n\n```"
-                  .. vim.bo.filetype
-                  .. "\n"
-                  .. require("codecompanion.helpers.actions").get_code(vim.fn.line("'<"), vim.fn.line("'>"))
-                  .. "\n```"
-              end,
-            },
-          },
-        },
-      },
+-- Provide actionable debugging steps and potential fixes.]],
+--             },
+--             {
+--               role = "user",
+--               content = function()
+--                 return "Help me debug this code:\n\n```"
+--                   .. vim.bo.filetype
+--                   .. "\n"
+--                   .. require("codecompanion.helpers.actions").get_code(vim.fn.line("'<"), vim.fn.line("'>"))
+--                   .. "\n```"
+--               end,
+--             },
+--           },
+--         },
 
-      -- Display options
-      display = {
-        action_palette = {
-          width = 95,
-          height = 10,
-        },
-        chat = {
-          window = {
-            layout = "vertical", -- vertical|horizontal|buffer
-            width = 0.45,
-            height = 0.8,
-            relative = "editor",
-            border = "rounded",
-            title = "CodeCompanion",
-          },
-          show_settings = true,
-        },
-      },
+--         -- Architecture Agent
+--         ["Architect"] = {
+--           strategy = "chat",
+--           description = "Provide architectural guidance and design review",
+--           opts = {
+--             adapter = get_default_adapter(), -- Use Sonnet for architectural analysis
+--             auto_submit = false,
+--           },
+--           prompts = {
+--             {
+--               role = "system",
+--               content = [[You are a senior software architect providing design guidance. Focus on:
 
-      -- General options
-      opts = {
-        log_level = "INFO", -- TRACE|DEBUG|INFO|WARN|ERROR
-        send_code = true,
-        use_default_actions = true,
-        use_default_prompts = true,
-      },
-    })
+-- **System Design**:
+-- - Overall architecture patterns and principles
+-- - Component separation and boundaries
+-- - Data flow and system interactions
+-- - Scalability and performance considerations
 
-    -- Helper function to check if we're in visual mode
-    local function get_visual_selection()
-      local mode = vim.fn.mode()
-      if mode == "v" or mode == "V" or mode == "\22" then -- \22 is <C-v>
-        return true
-      end
-      return false
-    end
+-- **Design Patterns**:
+-- - Appropriate pattern selection for the problem
+-- - Implementation best practices
+-- - Trade-offs and alternatives
 
-    -- Keybindings
-    local function map(mode, lhs, rhs, opts)
-      opts = opts or {}
-      opts.silent = opts.silent ~= false
-      vim.keymap.set(mode, lhs, rhs, opts)
-    end
+-- **Technology Choices**:
+-- - Framework and library recommendations
+-- - Database and storage decisions
+-- - Integration and communication patterns
 
-    -- AI Agent keybindings
-    map("n", "<leader>aa", "<cmd>CodeCompanionActions<cr>", { desc = "AI: Show action palette" })
-    map("v", "<leader>aa", "<cmd>CodeCompanionActions<cr>", { desc = "AI: Show action palette" })
-    
-    -- Chat
-    map("n", "<leader>ac", "<cmd>CodeCompanionChat Toggle<cr>", { desc = "AI: Toggle chat" })
-    map("v", "<leader>ac", "<cmd>CodeCompanionChat Toggle<cr>", { desc = "AI: Toggle chat" })
-    map("n", "<leader>aA", "<cmd>CodeCompanionChat Add<cr>", { desc = "AI: Add to chat" })
-    map("v", "<leader>aA", "<cmd>CodeCompanionChat Add<cr>", { desc = "AI: Add to chat" })
+-- **Quality Attributes**:
+-- - Maintainability and extensibility
+-- - Reliability and fault tolerance
+-- - Security and compliance
+-- - Performance and scalability
 
-    -- Inline assistance
-    map("n", "<leader>ai", "<cmd>CodeCompanion<cr>", { desc = "AI: Inline assist" })
-    map("v", "<leader>ai", "<cmd>CodeCompanion<cr>", { desc = "AI: Inline assist" })
+-- Provide high-level guidance with practical implementation advice.]],
+--             },
+--             {
+--               role = "user",
+--               content = function()
+--                 return "Please review the architecture of this code:\n\n```"
+--                   .. vim.bo.filetype
+--                   .. "\n"
+--                   .. require("codecompanion.helpers.actions").get_code(vim.fn.line("'<"), vim.fn.line("'>"))
+--                   .. "\n```"
+--               end,
+--             },
+--           },
+--         },
+--       },
 
-    -- Agent roles
-    map("n", "<leader>ar", function()
-      codecompanion.prompt("Refactor")
-    end, { desc = "AI: Refactor code" })
-    map("v", "<leader>ar", function()
-      codecompanion.prompt("Refactor")
-    end, { desc = "AI: Refactor code" })
+--       -- Display options
+--       display = {
+--         action_palette = {
+--           width = 95,
+--           height = 10,
+--         },
+--         chat = {
+--           window = {
+--             layout = "vertical", -- vertical|horizontal|buffer
+--             width = 0.45,
+--             height = 0.8,
+--             relative = "editor",
+--             border = "rounded",
+--             title = "CodeCompanion",
+--           },
+--           show_settings = true,
+--         },
+--       },
 
-    map("n", "<leader>at", function()
-      codecompanion.prompt("TestGen")
-    end, { desc = "AI: Generate tests" })
-    map("v", "<leader>at", function()
-      codecompanion.prompt("TestGen")
-    end, { desc = "AI: Generate tests" })
+--       -- General options
+--       opts = {
+--         log_level = "INFO", -- TRACE|DEBUG|INFO|WARN|ERROR
+--         send_code = true,
+--         use_default_actions = true,
+--         use_default_prompts = true,
+--       },
+--     })
 
-    map("n", "<leader>av", function()
-      codecompanion.prompt("Reviewer")
-    end, { desc = "AI: Code review" })
-    map("v", "<leader>av", function()
-      codecompanion.prompt("Reviewer")
-    end, { desc = "AI: Code review" })
+--     -- Helper function to check if we're in visual mode
+--     local function get_visual_selection()
+--       local mode = vim.fn.mode()
+--       if mode == "v" or mode == "V" or mode == "\22" then -- \22 is <C-v>
+--         return true
+--       end
+--       return false
+--     end
 
-    map("n", "<leader>ad", function()
-      codecompanion.prompt("Docs")
-    end, { desc = "AI: Generate docs" })
-    map("v", "<leader>ad", function()
-      codecompanion.prompt("Docs")
-    end, { desc = "AI: Generate docs" })
+--     -- Keybindings
+--     local function map(mode, lhs, rhs, opts)
+--       opts = opts or {}
+--       opts.silent = opts.silent ~= false
+--       vim.keymap.set(mode, lhs, rhs, opts)
+--     end
 
-    map("n", "<leader>aD", function()
-      codecompanion.prompt("Debug")
-    end, { desc = "AI: Debug help" })
-    map("v", "<leader>aD", function()
-      codecompanion.prompt("Debug")
-    end, { desc = "AI: Debug help" })
+--     -- AI Agent keybindings
+--     map("n", "<leader>aa", "<cmd>CodeCompanionActions<cr>", { desc = "AI: Show action palette" })
+--     map("v", "<leader>aa", "<cmd>CodeCompanionActions<cr>", { desc = "AI: Show action palette" })
 
-    map("n", "<leader>aP", function()
-      codecompanion.prompt("Architect")
-    end, { desc = "AI: Architecture review" })
-    map("v", "<leader>aP", function()
-      codecompanion.prompt("Architect")
-    end, { desc = "AI: Architecture review" })
+--     -- Chat
+--     map("n", "<leader>ac", "<cmd>CodeCompanionChat Toggle<cr>", { desc = "AI: Toggle chat" })
+--     map("v", "<leader>ac", "<cmd>CodeCompanionChat Toggle<cr>", { desc = "AI: Toggle chat" })
+--     map("n", "<leader>aA", "<cmd>CodeCompanionChat Add<cr>", { desc = "AI: Add to chat" })
+--     map("v", "<leader>aA", "<cmd>CodeCompanionChat Add<cr>", { desc = "AI: Add to chat" })
 
-    -- Quick actions
-    map("v", "<leader>ae", "<cmd>CodeCompanionChat<cr>", { desc = "AI: Explain code" })
-    map("v", "<leader>af", "<cmd>CodeCompanionChat<cr>", { desc = "AI: Fix code" })
-    map("v", "<leader>ao", "<cmd>CodeCompanionChat<cr>", { desc = "AI: Optimize code" })
-    
-    -- Show available adapters and current config
-    map("n", "<leader>as", function()
-      local adapters = get_available_adapters()
-      local adapter_list = {}
-      for name, _ in pairs(adapters) do
-        table.insert(adapter_list, name)
-      end
-      
-      vim.notify(
-        "Available AI providers: " .. table.concat(adapter_list, ", ") .. "\nDefault: " .. get_default_adapter(),
-        vim.log.levels.INFO
-      )
-    end, { desc = "AI: Show available providers" })
+--     -- Inline assistance
+--     map("n", "<leader>ai", "<cmd>CodeCompanion<cr>", { desc = "AI: Inline assist" })
+--     map("v", "<leader>ai", "<cmd>CodeCompanion<cr>", { desc = "AI: Inline assist" })
 
-    -- Create user command for easy API key status check
-    vim.api.nvim_create_user_command("CodeCompanionStatus", function()
-      local status = {}
-      local providers = { "openai", "anthropic", "gemini" }
-      
-      for _, provider in ipairs(providers) do
-        local key = get_api_key(provider)
-        table.insert(status, provider .. ": " .. (key and "✓" or "✗"))
-      end
-      
-      -- Check if ollama is running
-      local ollama_status = "✗"
-      local handle = io.popen("curl -s http://localhost:11434/api/tags 2>/dev/null")
-      if handle then
-        local result = handle:read("*a")
-        handle:close()
-        if result and result ~= "" then
-          ollama_status = "✓"
-        end
-      end
-      table.insert(status, "ollama: " .. ollama_status)
-      
-      vim.notify("AI Provider Status:\n" .. table.concat(status, "\n"), vim.log.levels.INFO)
-    end, { desc = "Check AI provider status" })
+--     -- Agent roles
+--     map("n", "<leader>ar", function()
+--       codecompanion.prompt("Refactor")
+--     end, { desc = "AI: Refactor code" })
+--     map("v", "<leader>ar", function()
+--       codecompanion.prompt("Refactor")
+--     end, { desc = "AI: Refactor code" })
 
-    -- Notification about setup
-    local available_providers = {}
-    if get_api_key("openai") then table.insert(available_providers, "OpenAI") end
-    if get_api_key("anthropic") then table.insert(available_providers, "Anthropic") end
-    if get_api_key("gemini") then table.insert(available_providers, "Gemini") end
-    table.insert(available_providers, "Ollama")
-    
-    vim.notify(
-      "CodeCompanion loaded with providers: " .. table.concat(available_providers, ", ") .. 
-      "\nUse <leader>aa to access AI actions, <leader>as to check status",
-      vim.log.levels.INFO
-    )
-  end,
-}
+--     map("n", "<leader>at", function()
+--       codecompanion.prompt("TestGen")
+--     end, { desc = "AI: Generate tests" })
+--     map("v", "<leader>at", function()
+--       codecompanion.prompt("TestGen")
+--     end, { desc = "AI: Generate tests" })
+
+--     map("n", "<leader>av", function()
+--       codecompanion.prompt("Reviewer")
+--     end, { desc = "AI: Code review" })
+--     map("v", "<leader>av", function()
+--       codecompanion.prompt("Reviewer")
+--     end, { desc = "AI: Code review" })
+
+--     map("n", "<leader>ad", function()
+--       codecompanion.prompt("Docs")
+--     end, { desc = "AI: Generate docs" })
+--     map("v", "<leader>ad", function()
+--       codecompanion.prompt("Docs")
+--     end, { desc = "AI: Generate docs" })
+
+--     map("n", "<leader>aD", function()
+--       codecompanion.prompt("Debug")
+--     end, { desc = "AI: Debug help" })
+--     map("v", "<leader>aD", function()
+--       codecompanion.prompt("Debug")
+--     end, { desc = "AI: Debug help" })
+
+--     map("n", "<leader>aP", function()
+--       codecompanion.prompt("Architect")
+--     end, { desc = "AI: Architecture review" })
+--     map("v", "<leader>aP", function()
+--       codecompanion.prompt("Architect")
+--     end, { desc = "AI: Architecture review" })
+
+--     -- Quick actions
+--     map("v", "<leader>ae", "<cmd>CodeCompanionChat<cr>", { desc = "AI: Explain code" })
+--     map("v", "<leader>af", "<cmd>CodeCompanionChat<cr>", { desc = "AI: Fix code" })
+--     map("v", "<leader>ao", "<cmd>CodeCompanionChat<cr>", { desc = "AI: Optimize code" })
+
+--     -- Show available adapters and current config (Anthropic only)
+--     map("n", "<leader>as", function()
+--       local adapters = get_available_adapters()
+--       local adapter_list = {}
+--       for name, _ in pairs(adapters) do
+--         table.insert(adapter_list, name)
+--       end
+
+--       local default_adapter = get_default_adapter()
+--       local efficient_adapter = get_efficient_adapter()
+
+--       vim.notify(
+--         "Available Claude models: " .. table.concat(adapter_list, ", ") ..
+--         "\nDefault (complex tasks): " .. (default_adapter or "none") ..
+--         "\nEfficient (simple tasks): " .. (efficient_adapter or "none"),
+--         vim.log.levels.INFO
+--       )
+--     end, { desc = "AI: Show available Claude models" })
+
+--     -- Create user command for Anthropic API key status check
+--     vim.api.nvim_create_user_command("CodeCompanionStatus", function()
+--       local anthropic_key = get_anthropic_key()
+--       local status = "Anthropic Claude: " .. (anthropic_key and "✓" or "✗")
+
+--       if anthropic_key then
+--         vim.notify(
+--           "CodeCompanion Status:\n" .. status ..
+--           "\n\nAvailable models:\n  • Claude 3.5 Sonnet (complex tasks)\n  • Claude 3.5 Haiku (simple tasks)",
+--           vim.log.levels.INFO
+--         )
+--       else
+--         vim.notify(
+--           "CodeCompanion Status:\n" .. status ..
+--           "\n\nTo set up Anthropic API key:\n  ./ai-keys add anthropic",
+--           vim.log.levels.WARN
+--         )
+--       end
+--     end, { desc = "Check Anthropic Claude status" })
+
+--     -- Notification about setup
+--     local anthropic_key = get_anthropic_key()
+--     if anthropic_key then
+--       vim.notify(
+--         "CodeCompanion loaded with Anthropic Claude models" ..
+--         "\nUse <leader>aa for AI actions, <leader>as to check status",
+--         vim.log.levels.INFO
+--       )
+--     else
+--       vim.notify(
+--         "CodeCompanion: No Anthropic API key found" ..
+--         "\nRun './ai-keys add anthropic' to set up Claude access",
+--         vim.log.levels.WARN
+--       )
+--     end
+--   end,
+-- }
